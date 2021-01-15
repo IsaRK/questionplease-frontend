@@ -1,26 +1,38 @@
 import React from 'react';
-import logo from './logo.svg';
+import Box from '@material-ui/core/Box';
 import './App.css';
+import { QuestionComputer } from './components/QuestionComputer';
+import { AnswerForm } from './components/AnswerForm';
+import { makeStyles } from '@material-ui/core/styles';
 
-function App() {
+
+export const useStyles = makeStyles(theme => ({
+  root: {
+    padding: theme.spacing(3, 2),
+    verticalAlign: 'middle',
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+}));
+
+export const App: React.FC = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <StyledBox>
+        <QuestionComputer/>
+        <AnswerForm/>
+      </StyledBox>
+  )
 }
 
-export default App;
+export const StyledBox: React.FunctionComponent = ((props) => {
+
+  const styleClass = useStyles();
+
+  return (
+    <Box className={styleClass.root}>
+      {props.children}
+    </Box>
+  )
+})
