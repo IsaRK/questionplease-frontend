@@ -30,7 +30,7 @@ export function questionsReducer(
     case actionTypes.QUESTIONS_READANSWERSFROMAPI:
       return {
         ...state,
-        Questions: action.questions
+        Questions: action.payload
       };
     case actionTypes.QUESTIONS_SELECTRANDOM:
       return {

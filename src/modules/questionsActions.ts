@@ -1,6 +1,5 @@
 import * as actionTypes from "./actionTypes"
-import { useDispatch } from 'react-redux';
-import { Action, ActionCreator, Dispatch } from 'redux';
+import { ActionCreator, Dispatch } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import { Question } from "./questions";
 import { loadTestDataFromApi } from "./dataLoading";
@@ -8,8 +7,12 @@ import { loadTestDataFromApi } from "./dataLoading";
 export interface QuestionsAction {
     type: string
   }
+
+export interface QuestionAnswerAction extends QuestionsAction {
+  payload : Question[]
+}
   
-  export type QuestionsActionType = QuestionsAction | IGettingQuestionAction | IGotQuestionAction;
+  export type QuestionsActionType = QuestionAnswerAction;
   
   //Un action est un object simple qui contient une propriété "type"
   // TypeScript infers that this function is returning selectAllQuestionsAction
@@ -25,51 +28,41 @@ export interface QuestionsAction {
       type: actionTypes.QUESTIONS_SELECTRANDOM
     } as const
   }
-  
-  //TODO : transform to QuestionsAction and QuestionsAction with payload = Question[]
-  export interface IGettingQuestionAction
-    extends Action<"questions/QUESTIONS_GETQUESTIONSFROMAPI"> {}
-  
-  export interface IGotQuestionAction
-    extends Action<"questions/READANSWERSFROMAPI"> {
-    questions: Question[];
+
+  export function gettingQuestionAction(): QuestionsAction {
+    return {
+      type: actionTypes.QUESTIONS_GETQUESTIONSFROMAPI
+    } as const
   }
-  
+
+  export function gotQuestionAction(questions:Question[]): QuestionAnswerAction {
+    return {
+      type: actionTypes.QUESTIONS_READANSWERSFROMAPI,
+      payload:questions
+    } as const
+  }
+
   //https://www.carlrippon.com/strongly-typed-react-redux-code-with-typescript/
+  /*ThunkAction<R, S, E, A extends Action> type is used. It accepts following type arguments:
+
+R stays for return type of the internal function. In the above example, internal function is async function so it returns Promise<void>
+S stays for the app state
+E is the extension attribute type which is not used
+A is type of the action. KnownActions in example above is the union of all possible action types (type KnownActions = Action1 | Action2;)
+*/
   export const getQuestionActionCreator: ActionCreator<ThunkAction<
     // The type of the last action to be dispatched - will always be promise<T> for async actions
-    Promise<IGotQuestionAction>,
+    Promise<QuestionAnswerAction>,
     // The type for the data within the last action
     Question[],
     // The type of the parameter for the nested function
     null,
     // The type of the last action to be dispatched
-    IGotQuestionAction
+    QuestionAnswerAction
   >> = () => {
     return async (dispatch: Dispatch) => {
-      const gettingQuestionAction: IGettingQuestionAction = {
-        type: actionTypes.QUESTIONS_GETQUESTIONSFROMAPI,
-      };
-      dispatch(gettingQuestionAction);
+      dispatch(gettingQuestionAction());
       const questions = await loadTestDataFromApi();
-      const gotQuestionAction: IGotQuestionAction = {
-        questions,
-        type: actionTypes.QUESTIONS_READANSWERSFROMAPI,
-      };
-      return dispatch(gotQuestionAction);
+      return dispatch(gotQuestionAction(questions));
     };
   };
-  
-  /*The selectAllQuestionsFromApi function returns a function rather than the action object 
-  as it did when the function was synchronous. 
-  The inner function takes in a parameter, dispatch, which is another function that is used to dispatch the action.
-  
-  export const selectAllQuestionsFromApi = () => async (
-    dispatch: Dispatch<QuestionsAction>
-  ) => {
-    await loadTestDataFromApi();
-    dispatch({
-      type: actionTypes.QUESTIONS_READALLFROMAPI,
-    } as const);
-  };
-  */

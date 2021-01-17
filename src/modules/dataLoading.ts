@@ -1,6 +1,11 @@
 import { Question } from "./questions";
 import { results as testDataQuestions } from '../data/data.json';
 
+interface IApiResponse
+{
+  results:ISerializedApiQuestion[]
+}
+
 interface ISerializedApiQuestion {
     category: string;
     type: string;
@@ -34,9 +39,9 @@ interface HttpResponse<T> extends Response {
   export async function loadTestDataFromApi(): Promise<Question[]> {
     let result = new Array<Question>();
   
-    let dataFromApi : HttpResponse<ISerializedApiQuestion[]>;
+    let dataFromApi : HttpResponse<IApiResponse>;
     try {
-      dataFromApi = await getQuestionsFromAPI<ISerializedApiQuestion[]>(
+      dataFromApi = await getQuestionsFromAPI<IApiResponse>(
         'https://opentdb.com/api.php?amount=10'
       );
       console.log("response", dataFromApi);
@@ -45,13 +50,13 @@ interface HttpResponse<T> extends Response {
       return new Array<Question>();
     }
   
-    if (dataFromApi.parsedBody == undefined)
+    if (dataFromApi.parsedBody === undefined)
     {
       console.log("Undefined Parsed Body");
       return new Array<Question>();
     }
   
-    dataFromApi.parsedBody.forEach((saq: ISerializedApiQuestion) => {
+    dataFromApi.parsedBody.results.forEach((saq: ISerializedApiQuestion) => {
             const question = new Question(getNextId(result), saq.question, saq.correct_answer);
             result.push(question);
         });

@@ -1,3 +1,4 @@
+import { Console } from "console";
 import { loadTestData } from "./dataLoading";
 
 export type QuestionsState = {
@@ -28,7 +29,9 @@ export function selectRandomQuestion(questionsArray:Array<Question>|null): Quest
   if (questionsArray === null)
   {
     //Parce que je ne sais pas encore loader les data à l'initialisation
-    questionsArray = loadTestData();
+    //questionsArray = loadTestData();
+    console.log("Error fetching data");
+    return new Question(0, "Error Data", "");
   }
 
   var max = questionsArray.length;

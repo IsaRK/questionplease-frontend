@@ -1,44 +1,65 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import { connect, useDispatch } from 'react-redux'
 
 import { RootState } from '../modules/reducer';
-import { selectAllQuestionsAction, selectRandomQuestionAction, selectAllQuestionsFromApi } from '../modules/questions';
+import { selectRandomQuestionAction, getQuestionActionCreator, QuestionAnswerAction, QuestionsAction } from '../modules/questionsActions';
+import { ThunkDispatch } from 'redux-thunk';
+import { AnyAction } from 'redux';
+import { Question } from '../modules/questions';
+
+interface IProps {
+  questions : Question[] | null;
+  selectedQuestion : Question | null;
+  getQuestions : () => Promise<QuestionAnswerAction>;
+  selectRandomQuestionAction : () => QuestionsAction;
+}
 
 const mapStateToProps = (state: RootState) => ({
-  questions: state.questionsState.Questions,
-  selectedQuestion : state.questionsState.SelectedQuestion
-});
+    questions: state.questionsState.Questions,
+    selectedQuestion : state.questionsState.SelectedQuestion
+  });
 
-const mapDispatchToProps = { selectAllQuestionsAction, selectRandomQuestionAction, selectAllQuestionsFromApi };
+const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) =>
+  { 
+    return {
+      getQuestions: () => dispatch(getQuestionActionCreator()),
+      selectRandomQuestionAction: () => selectRandomQuestionAction()
+    }
+  };
 
-type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps;
-
+  /*
 //useDispatch returns a function that we name dispatch
 //We then invoke actions using dispatch by passing our action creators into it
 const dispatch = useDispatch();
+*/
 
-const dispatchLoadFromApi = () => {
-  dispatch(selectAllQuestionsFromApi());
-};
-
-export const UnconnectedQuestionComputer: React.FunctionComponent<Props> = ((props) => {
+export const UnconnectedQuestionComputer: React.FunctionComponent<IProps> = ({
+  selectedQuestion,
+  getQuestions,
+  selectRandomQuestionAction,
+}) => {
  
-  if (props.selectedQuestion == null)
+  /*If not destructued :
+  React Hook useEffect has a missing dependency: 'props'. Either include it or remove the dependency array. 
+  However, 'props' will change when *any* prop changes, so the preferred fix is to destructure the 'props' 
+  object outside of the useEffect call and refer to those specific props inside useEffect  react-hooks/exhaustive-deps
+  */
+  useEffect( () => { getQuestions()}, []);
+
+  const handleSelectRandomQuestion= () => {
+    selectRandomQuestionAction;
+    console.log("selectRandomQuestionClick")
+  }
+
+  if (selectedQuestion == null)
     {
       return (
         <Box display= 'flex' justifyContent= 'center'>
-          <Button 
-          variant="contained"
-          onClick={dispatchLoadFromApi()} 
-          disabled={ false }
-          >
-              Load API Questions
-          </Button>
         <Button 
           variant="contained"
-          onClick={props.selectRandomQuestionAction} 
+          onClick={handleSelectRandomQuestion} 
           disabled={ false }
           >
               Question Please
@@ -50,11 +71,11 @@ export const UnconnectedQuestionComputer: React.FunctionComponent<Props> = ((pro
     return (
       <Box display= 'flex' justifyContent= 'center'> 
         <Box>
-          {props.selectedQuestion.interrogation}
+          {selectedQuestion.interrogation}
         </Box>
       </Box>      
     )
-})
+};
 
 export const QuestionComputer = connect(
     mapStateToProps,
