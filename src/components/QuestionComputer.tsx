@@ -29,11 +29,9 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) =>
     }
   };
 
-  /*
 //useDispatch returns a function that we name dispatch
 //We then invoke actions using dispatch by passing our action creators into it
-const dispatch = useDispatch();
-*/
+
 
 export const UnconnectedQuestionComputer: React.FunctionComponent<IProps> = ({
   selectedQuestion,
@@ -48,8 +46,10 @@ export const UnconnectedQuestionComputer: React.FunctionComponent<IProps> = ({
   */
   useEffect( () => { getQuestions()}, []);
 
+  const dispatch = useDispatch();
+
   const handleSelectRandomQuestion= () => {
-    selectRandomQuestionAction;
+    dispatch(selectRandomQuestionAction);
     console.log("selectRandomQuestionClick")
   }
 
