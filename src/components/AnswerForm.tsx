@@ -5,25 +5,22 @@ import Button from '@material-ui/core/Button';
 import { Box } from '@material-ui/core';
 import { useStyles } from '../App';
 import { RootState } from '../modules/reducer';
-import { connect } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { Question } from '../modules/questions';
+import { validateAnswerAction } from '../modules/answerActions';
 
-const mapStateToProps = (state: RootState) => ({
-    selectedQuestion : state.questionsState.SelectedQuestion
-  });
+export const AnswerForm: React.FunctionComponent = () => {
 
-const mapDispatchToProps = { };
-
-type Props = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps;
-
-export const UnconnectedAnswerForm: React.FunctionComponent<Props> = ((props) => {
-
-  function onsubmit(answer: string) {
-    console.log("Form submitted with answer" + answer);
+  const dispatch = useDispatch();
+  const selectedQuestion: Question | null = useSelector((state: RootState) => state.questionsState.SelectedQuestion);
+  
+  const dispatchValidation = (answer: string) => {
+    dispatch(validateAnswerAction(answer));
   }
 
   const styleClass = useStyles();
 
-  if (props.selectedQuestion === null)
+  if (selectedQuestion === null)
     {
       return <div/>
     }
@@ -32,7 +29,7 @@ export const UnconnectedAnswerForm: React.FunctionComponent<Props> = ((props) =>
     <Box className={styleClass.root}>
       <Formik
         initialValues={{ answer: "" }}
-        onSubmit={(values) => onsubmit(values.answer)}
+        onSubmit={(values) => dispatchValidation(values.answer)}
       >
         {({ values, handleChange, handleBlur }) =>
           <Form>
@@ -43,18 +40,11 @@ export const UnconnectedAnswerForm: React.FunctionComponent<Props> = ((props) =>
                 onChange={handleChange}
                 onBlur={handleBlur}
               />
-
             </div>
-
             <Button type="submit">Submit</Button>
           </Form>}
       </Formik>
 
     </Box>
   )
-});
-
-export const AnswerForm = connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(UnconnectedAnswerForm);
+};

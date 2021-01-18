@@ -1,10 +1,13 @@
 import { combineReducers } from 'redux';
-import * as actionTypes from "./actionTypes"
+import { actionTypes } from "./actionTypes"
 import { QuestionsState, selectRandomQuestion } from './questions';
+import { AnswerAction, validateAnswer } from './answerActions';
 import { loadTestData } from './dataLoading';
-import { QuestionsActionType } from './questionsActions';
+import { QuestionsAction } from './questionsActions';
 
-const initialQuestionsState: QuestionsState = { Questions: null, SelectedQuestion: null };
+const initialQuestionsState: QuestionsState = { Questions: null, SelectedQuestion: null};
+
+export type QuestionsActionType = QuestionsAction | AnswerAction;
 
 //Le reducer est une function pure :
 //Sa valeur de retour est la même pour les mêmes arguments :
@@ -30,12 +33,17 @@ export function questionsReducer(
     case actionTypes.QUESTIONS_READANSWERSFROMAPI:
       return {
         ...state,
-        Questions: action.payload
+        Questions: action.questions
       };
     case actionTypes.QUESTIONS_SELECTRANDOM:
       return {
         ...state,
         SelectedQuestion: selectRandomQuestion(state.Questions),
+      };
+    case actionTypes.QUESTION_VALIDATE:
+      validateAnswer(state.SelectedQuestion?.answer, action.userAnswer);
+      return {
+        ...state,
       };
     default:
       return state;

@@ -4,7 +4,7 @@ import Box from '@material-ui/core/Box';
 import { connect, useDispatch } from 'react-redux'
 
 import { RootState } from '../modules/reducer';
-import { selectRandomQuestionAction, getQuestionActionCreator, QuestionAnswerAction, QuestionsAction } from '../modules/questionsActions';
+import { selectRandomQuestionAction, getQuestionActionCreator, QuestionsAction } from '../modules/questionsActions';
 import { ThunkDispatch } from 'redux-thunk';
 import { AnyAction } from 'redux';
 import { Question } from '../modules/questions';
@@ -12,7 +12,7 @@ import { Question } from '../modules/questions';
 interface IProps {
   questions : Question[] | null;
   selectedQuestion : Question | null;
-  getQuestions : () => Promise<QuestionAnswerAction>;
+  getQuestions : () => Promise<QuestionsAction>;
   selectRandomQuestionAction : () => QuestionsAction;
 }
 

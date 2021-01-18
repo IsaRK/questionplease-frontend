@@ -1,26 +1,22 @@
-import * as actionTypes from "./actionTypes"
+import { actionTypes } from "./actionTypes"
 import { ActionCreator, Dispatch } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import { Question } from "./questions";
 import { loadTestDataFromApi } from "./dataLoading";
 
-export interface QuestionsAction {
-    type: string
-  }
+export type QuestionsAction =
+  | { type: actionTypes.QUESTIONS_READALL }
+  | { type: actionTypes.QUESTIONS_GETQUESTIONSFROMAPI }
+  | { type: actionTypes.QUESTIONS_SELECTRANDOM }
+  | { type: actionTypes.QUESTIONS_READANSWERSFROMAPI; questions : Question[] };
 
-export interface QuestionAnswerAction extends QuestionsAction {
-  payload : Question[]
-}
-  
-  export type QuestionsActionType = QuestionAnswerAction;
-  
   //Un action est un object simple qui contient une propriété "type"
   // TypeScript infers that this function is returning selectAllQuestionsAction
   //Actions creators are functions that create and return action objects
   export function selectAllQuestionsAction(): QuestionsAction {
     return {
       type: actionTypes.QUESTIONS_READALL
-    } as const
+    }
   }
   
   export function selectRandomQuestionAction(): QuestionsAction {
@@ -35,10 +31,10 @@ export interface QuestionAnswerAction extends QuestionsAction {
     } as const
   }
 
-  export function gotQuestionAction(questions:Question[]): QuestionAnswerAction {
+  export function gotQuestionAction(questions:Question[]): QuestionsAction {
     return {
       type: actionTypes.QUESTIONS_READANSWERSFROMAPI,
-      payload:questions
+      questions: questions
     } as const
   }
 
@@ -52,13 +48,13 @@ A is type of the action. KnownActions in example above is the union of all possi
 */
   export const getQuestionActionCreator: ActionCreator<ThunkAction<
     // The type of the last action to be dispatched - will always be promise<T> for async actions
-    Promise<QuestionAnswerAction>,
+    Promise<QuestionsAction>,
     // The type for the data within the last action
     Question[],
     // The type of the parameter for the nested function
     null,
     // The type of the last action to be dispatched
-    QuestionAnswerAction
+    QuestionsAction
   >> = () => {
     return async (dispatch: Dispatch) => {
       dispatch(gettingQuestionAction());
