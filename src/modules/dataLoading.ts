@@ -42,7 +42,7 @@ interface HttpResponse<T> extends Response {
     let dataFromApi : HttpResponse<IApiResponse>;
     try {
       dataFromApi = await getQuestionsFromAPI<IApiResponse>(
-        'https://opentdb.com/api.php?amount=10'
+        'https://opentdb.com/api.php?amount=10&category=9&difficulty=easy'
       );
       console.log("response", dataFromApi);
     } catch (response) {

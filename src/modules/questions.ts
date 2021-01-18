@@ -31,7 +31,7 @@ export function selectRandomQuestion(questionsArray:Array<Question>|null): Quest
     //Parce que je ne sais pas encore loader les data à l'initialisation
     //questionsArray = loadTestData();
     console.log("Error fetching data");
-    return new Question(0, "Error Data", "");
+    return null;
   }
 
   var max = questionsArray.length;
