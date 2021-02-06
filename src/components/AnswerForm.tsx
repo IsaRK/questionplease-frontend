@@ -1,36 +1,37 @@
-import React from 'react';
-import TextField from '@material-ui/core/TextField';
-import { Form, Formik } from 'formik';
-import Button from '@material-ui/core/Button';
-import { Box } from '@material-ui/core';
-import { useStyles } from '../App';
-import { RootState } from '../modules/reducer';
-import { useDispatch, useSelector } from 'react-redux'
-import { Question } from '../modules/questions';
-import { validateAnswerAction } from '../modules/answerActions';
-import { AnswerResult } from './AnswerResult';
+import React from "react";
+import TextField from "@material-ui/core/TextField";
+import { Form, Formik } from "formik";
+import Button from "@material-ui/core/Button";
+import { Box } from "@material-ui/core";
+import { useStyles } from "../App";
+import { RootState } from "../modules/reducer";
+import { useDispatch, useSelector } from "react-redux";
+import { Question } from "../modules/questions";
+import { validateAnswerAction } from "../modules/answerActions";
+import { AnswerResult } from "./AnswerResult";
 
 export const AnswerForm: React.FunctionComponent = () => {
-
   const dispatch = useDispatch();
-  const selectedQuestion: Question | null = useSelector((state: RootState) => state.questionsState.SelectedQuestion);
-  const answerResult:Boolean | null = useSelector((state: RootState) => state.questionsState.AnswerResult);
-  
+  const selectedQuestion: Question | null = useSelector(
+    (state: RootState) => state.questionsState.SelectedQuestion
+  );
+  const answerResult: Boolean | null = useSelector(
+    (state: RootState) => state.questionsState.AnswerResult
+  );
+
   const dispatchValidation = (answer: string) => {
     dispatch(validateAnswerAction(answer));
-  }
+  };
 
   const styleClass = useStyles();
 
-  if (selectedQuestion === null)
-    {
-      return <div/>
-    }
+  if (selectedQuestion === null) {
+    return <div />;
+  }
 
-    if (answerResult !== null)
-    {
-      return <AnswerResult/>
-    }
+  if (answerResult !== null) {
+    return <AnswerResult />;
+  }
 
   return (
     <Box className={styleClass.root}>
@@ -38,7 +39,7 @@ export const AnswerForm: React.FunctionComponent = () => {
         initialValues={{ answer: "" }}
         onSubmit={(values) => dispatchValidation(values.answer)}
       >
-        {({ values, handleChange, handleBlur }) =>
+        {({ values, handleChange, handleBlur }) => (
           <Form>
             <div>
               <TextField
@@ -49,9 +50,9 @@ export const AnswerForm: React.FunctionComponent = () => {
               />
             </div>
             <Button type="submit">Submit</Button>
-          </Form>}
+          </Form>
+        )}
       </Formik>
-
     </Box>
-  )
+  );
 };

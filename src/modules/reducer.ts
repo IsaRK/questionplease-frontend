@@ -1,12 +1,13 @@
 import { combineReducers } from 'redux';
 import { actionTypes } from "./actionTypes"
-import { QuestionsState, selectRandomQuestion } from './questions';
 import { AnswerAction, validateAnswer } from './answerActions';
 import { loadTestData } from './dataLoading';
+import { LoginState } from './identity';
+import { loginAction, loginActionTypes } from './loginActions';
+import { QuestionsState, selectRandomQuestion } from './questions';
 import { QuestionsAction } from './questionsActions';
 
-const initialQuestionsState: QuestionsState = { Questions: null, SelectedQuestion: null, AnswerResult: null};
-
+const initialQuestionsState: QuestionsState = { Questions: null, SelectedQuestion: null, AnswerResult: null };
 export type QuestionsActionType = QuestionsAction | AnswerAction;
 
 //Le reducer est une function pure :
@@ -61,8 +62,26 @@ export function questionsReducer(
   }
 }
 
+const initialLoginState: LoginState = { Identity: null, LastError: null };
+
+export function loginReducer(state = initialLoginState, action: loginAction) {
+  switch (action.type) {
+    case loginActionTypes.NETWORK_ERROR:
+      return { ...state, LastError: action.error };
+    case loginActionTypes.SIGN_IN:
+      return { ...state };
+    case loginActionTypes.SIGNED_IN:
+      return { ...state, Identity: action.identity };
+    case loginActionTypes.SIGN_OUT:
+      return { ...state, Identity: null };
+    default:
+      return state;
+  }
+}
+
 export const rootReducer = combineReducers({
   questionsState: questionsReducer,
+  loginState: loginReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

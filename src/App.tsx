@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import Box from "@material-ui/core/Box";
 import "./App.css";
 import { QuestionComputer } from "./components/QuestionComputer";
 import { AnswerForm } from "./components/AnswerForm";
 import { makeStyles } from "@material-ui/core/styles";
-import AzureAuthenticationButton from "./azure/azure-authentication-component";
-import { AccountInfo } from "@azure/msal-browser";
+import SignInButton from "./components/SignInButton";
 
 export const useStyles = makeStyles((theme) => ({
   root: {
@@ -19,6 +18,7 @@ export const useStyles = makeStyles((theme) => ({
 }));
 
 export const App: React.FC = () => {
+  /*
   // current authenticated user
   const [currentUser, setCurrentUser] = useState<AccountInfo>();
 
@@ -57,9 +57,11 @@ export const App: React.FC = () => {
       </div>
     );
   };
+  */
 
   return (
     <StyledBox>
+      {/*
       <div id="App">
         <h2>Microsoft Login Button application</h2>
         <AzureAuthenticationButton onAuthenticated={onAuthenticated} />
@@ -70,6 +72,8 @@ export const App: React.FC = () => {
           </div>
         )}
       </div>
+        */}
+      <SignInButton />
       <QuestionComputer />
       <AnswerForm />
     </StyledBox>

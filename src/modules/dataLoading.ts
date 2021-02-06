@@ -1,13 +1,7 @@
-import { Question } from "./questions";
 import { results as testDataQuestions } from '../data/data.json';
+import { Question } from './questions';
 
 const questionPleaseApi = 'https://questionplease-api.azurewebsites.net/api/question';
-
-/*
-interface IApiResponse {
-  results: ISerializedApiQuestion[]
-}
-*/
 
 interface ISerializedApiQuestion {
   category: string;
