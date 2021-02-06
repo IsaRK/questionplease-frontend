@@ -5,7 +5,7 @@ import { AnswerAction, validateAnswer } from './answerActions';
 import { loadTestData } from './dataLoading';
 import { QuestionsAction } from './questionsActions';
 
-const initialQuestionsState: QuestionsState = { Questions: null, SelectedQuestion: null};
+const initialQuestionsState: QuestionsState = { Questions: null, SelectedQuestion: null, AnswerResult: null};
 
 export type QuestionsActionType = QuestionsAction | AnswerAction;
 
@@ -40,10 +40,21 @@ export function questionsReducer(
         ...state,
         SelectedQuestion: selectRandomQuestion(state.Questions),
       };
-    case actionTypes.QUESTION_VALIDATE:
-      validateAnswer(state.SelectedQuestion?.answer, action.userAnswer);
+    case actionTypes.ANSWER_VALIDATE:
       return {
         ...state,
+        AnswerResult: validateAnswer(state.SelectedQuestion?.answer, action.userAnswer)
+      };
+    case actionTypes.ANSWER_NEXTQUESTION:
+      return {
+        ...state,
+        AnswerResult: null,
+        SelectedQuestion: selectRandomQuestion(state.Questions)
+      };
+    case actionTypes.ANSWER_RETRY:
+      return {
+        ...state,
+        AnswerResult: null
       };
     default:
       return state;

@@ -1,6 +1,7 @@
 export type QuestionsState = {
     Questions : Question[] | null
     SelectedQuestion : Question | null
+    AnswerResult : Boolean | null
 };
 
 export class Question  {

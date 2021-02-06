@@ -1,15 +1,23 @@
 import {actionTypes} from "./actionTypes"
 
-export interface AnswerAction {
-    type: actionTypes.QUESTION_VALIDATE,
-    userAnswer : string
-}
+export type AnswerAction =
+  | { type: actionTypes.ANSWER_VALIDATE; userAnswer : string }
+  | { type: actionTypes.ANSWER_NEXTQUESTION }
+  | { type: actionTypes.ANSWER_RETRY }
 
 export function validateAnswerAction(userAnswer:string) : AnswerAction {
     return {
-        type: actionTypes.QUESTION_VALIDATE,
+        type: actionTypes.ANSWER_VALIDATE,
         userAnswer: userAnswer
     }
+}
+
+export const nextQuestionAnswerAction = {
+    type: actionTypes.ANSWER_NEXTQUESTION
+}
+
+export const retryAnswerAction =  {
+    type: actionTypes.ANSWER_RETRY,
 }
 
 export function validateAnswer(answer:string | undefined, currentAnswer:string):boolean

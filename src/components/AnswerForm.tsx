@@ -8,11 +8,13 @@ import { RootState } from '../modules/reducer';
 import { useDispatch, useSelector } from 'react-redux'
 import { Question } from '../modules/questions';
 import { validateAnswerAction } from '../modules/answerActions';
+import { AnswerResult } from './AnswerResult';
 
 export const AnswerForm: React.FunctionComponent = () => {
 
   const dispatch = useDispatch();
   const selectedQuestion: Question | null = useSelector((state: RootState) => state.questionsState.SelectedQuestion);
+  const answerResult:Boolean | null = useSelector((state: RootState) => state.questionsState.AnswerResult);
   
   const dispatchValidation = (answer: string) => {
     dispatch(validateAnswerAction(answer));
@@ -23,6 +25,11 @@ export const AnswerForm: React.FunctionComponent = () => {
   if (selectedQuestion === null)
     {
       return <div/>
+    }
+
+    if (answerResult !== null)
+    {
+      return <AnswerResult/>
     }
 
   return (
