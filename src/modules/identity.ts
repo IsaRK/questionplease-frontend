@@ -19,9 +19,11 @@ export default class Identity {
 
     get userId() {
         if (this.account) return this.account.homeAccountId;
+        else return null;
     }
 
     get name() {
         if (this.account) return this.account.name;
+        else return null;
     }
 }

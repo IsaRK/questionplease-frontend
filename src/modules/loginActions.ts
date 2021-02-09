@@ -16,10 +16,10 @@ export type loginAction =
     | { type: loginActionTypes.SIGN_OUT }
 
 //Login Action Creator Declaration (il s'agit ici de delegate et non pas de function comme pour les answerActions/questionsActions)
-const loginSignIn = () => ({ type: loginActionTypes.SIGN_IN });
+//const loginSignIn = () => ({ type: loginActionTypes.SIGN_IN });
 const loginSignedIn = (identity: Identity) => ({ type: loginActionTypes.SIGNED_IN, identity });
 const networkError = (error: Error) => ({ type: loginActionTypes.NETWORK_ERROR, error });
-const loginSignOut = () => ({ type: loginActionTypes.SIGN_OUT });
+//const loginSignOut = () => ({ type: loginActionTypes.SIGN_OUT });
 
 /*
 * In each of these action creators, we return a function. 

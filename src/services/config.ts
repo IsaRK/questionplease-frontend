@@ -16,6 +16,9 @@ import { Configuration, LogLevel } from "@azure/msal-browser";
 const AzureActiveDirectoryAppClientId: any =
   process.env.REACT_APP_AZURE_ACTIVE_DIRECTORY_APP_CLIENT_ID;
 
+const AzureActiveDirectoryRedirectUri: any =
+  process.env.REACT_APP_AZURE_ACTIVE_DIRECTORY_REDIRECT_URI;
+
 /* 
 reads your application ID in from the .env file
 sets session as the browser storage instead of cookies
@@ -25,6 +28,7 @@ provides logging that is considerate of personal information.
 export const MSAL_CONFIG: Configuration = {
   auth: {
     clientId: AzureActiveDirectoryAppClientId,
+    redirectUri: AzureActiveDirectoryRedirectUri,
   },
   cache: {
     cacheLocation: "sessionStorage",
