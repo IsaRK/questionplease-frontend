@@ -67,7 +67,7 @@ class AuthService {
         return this.myMSALObj.logout(logoutRequest);
     }
 
-    getTokenPopup() {
+    getTokenPopup(): Promise<void | AuthenticationResult | undefined> {
         // See here for more info on account retrieval:
         //https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-common/docs/Accounts.md
 
@@ -76,21 +76,22 @@ class AuthService {
             scopes: loginRequest.scopes
         }
 
-        return this.myMSALObj.acquireTokenSilent(silentRequest).catch(error => {
-            console.warn("silent token acquisition fails. acquiring token using redirect");
-            if (error instanceof InteractionRequiredAuthError) {
-                // fallback to interaction when silent call fails
-                return this.myMSALObj.acquireTokenPopup(silentRequest).then(tokenResponse => {
-                    console.log(tokenResponse);
+        return this.myMSALObj.acquireTokenSilent(silentRequest)
+            .catch(error => {
+                console.warn("silent token acquisition fails. acquiring token using redirect");
+                if (error instanceof InteractionRequiredAuthError) {
+                    // fallback to interaction when silent call fails
+                    return this.myMSALObj.acquireTokenPopup(silentRequest).then(tokenResponse => {
+                        console.log(tokenResponse);
 
-                    return tokenResponse;
-                }).catch(error => {
-                    console.error(error);
-                });
-            } else {
-                console.warn(error);
-            }
-        });
+                        return tokenResponse;
+                    }).catch(error => {
+                        console.error(error);
+                    });
+                } else {
+                    console.warn(error);
+                }
+            });
     }
 
     get serviceName() { return 'Microsoft'; }

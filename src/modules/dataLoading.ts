@@ -1,4 +1,5 @@
 //import { results as testDataQuestions } from '../data/data.json';
+import { AuthenticationResult } from '@azure/msal-browser';
 import { authService } from '../services/auth-service';
 import { Question } from './questions';
 
@@ -56,8 +57,13 @@ export async function getQuestionsFromAPI<T>(): Promise<HttpResponse<T>> {
   //https://docs.microsoft.com/en-us/azure/app-service/app-service-authentication-how-to#refresh-identity-provider-tokens
 
   const headers = new Headers();
-  const token = authService.getTokenPopup();
-  const bearer = `Bearer ${token}`;
+  const token = await authService.getTokenPopup();
+
+  if (!token) {
+    throw new Error("Undefined Token");
+  }
+
+  const bearer = `Bearer ${token.accessToken}`;
   headers.append("Authorization", bearer);
 
   var options = {
