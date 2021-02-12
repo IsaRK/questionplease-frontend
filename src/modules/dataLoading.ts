@@ -1,7 +1,9 @@
-import { results as testDataQuestions } from '../data/data.json';
+//import { results as testDataQuestions } from '../data/data.json';
+import { authService } from '../services/auth-service';
 import { Question } from './questions';
 
 const questionPleaseApi = 'https://questionplease-api.azurewebsites.net/api/question';
+//initial API : https://opentdb.com/api.php?amount=10&category=9&difficulty=easy'
 
 interface ISerializedApiQuestion {
   category: string;
@@ -23,27 +25,12 @@ interface HttpResponse<T> extends Response {
   parsedBody?: T;
 }
 
-export function loadTestData(): Array<Question> {
-  let result = new Array<Question>();
-  testDataQuestions
-    .forEach((saq: ISerializedApiQuestion) => {
-      const question = new Question(getNextId(result), saq.question, saq.correct_answer);
-      result.push(question);
-    });
-  return result;
-}
-
 export async function loadTestDataFromApi(): Promise<Question[]> {
   let result = new Array<Question>();
 
   let dataFromApi: HttpResponse<ISerializedApiQuestion[]>;
   try {
-    /*
-    dataFromApi = await getQuestionsFromAPI<IApiResponse>(
-      'https://opentdb.com/api.php?amount=10&category=9&difficulty=easy'
-    );
-    */
-    dataFromApi = await getQuestionsFromAPI<ISerializedApiQuestion[]>(questionPleaseApi);
+    dataFromApi = await getQuestionsFromAPI<ISerializedApiQuestion[]>();
     console.log("response", dataFromApi);
   } catch (response) {
     console.log("Error", response);
@@ -63,15 +50,24 @@ export async function loadTestDataFromApi(): Promise<Question[]> {
   return result
 }
 
-export async function getQuestionsFromAPI<T>(
-  request: RequestInfo
-): Promise<HttpResponse<T>> {
-  const response: HttpResponse<T> = await fetch(
-    request
-  );
+export async function getQuestionsFromAPI<T>(): Promise<HttpResponse<T>> {
+
+  //Pour faire un refresh silencieux si le token est expiré :
+  //https://docs.microsoft.com/en-us/azure/app-service/app-service-authentication-how-to#refresh-identity-provider-tokens
+
+  const headers = new Headers();
+  const token = authService.getTokenPopup();
+  const bearer = `Bearer ${token}`;
+  headers.append("Authorization", bearer);
+
+  var options = {
+    method: "GET",
+    headers: headers
+  };
+
+  const response: HttpResponse<T> = await fetch(questionPleaseApi, options);
 
   try {
-    // may error if there is no body
     response.parsedBody = await response.json();
   } catch (ex) { }
 

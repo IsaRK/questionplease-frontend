@@ -1,7 +1,6 @@
 import { combineReducers } from 'redux';
 import { actionTypes } from "./actionTypes"
 import { AnswerAction, validateAnswer } from './answerActions';
-import { loadTestData } from './dataLoading';
 import { LoginState } from './identity';
 import { loginAction, loginActionTypes } from './loginActions';
 import { QuestionsState, selectRandomQuestion } from './questions';
@@ -22,19 +21,10 @@ export function questionsReducer(
   action: QuestionsActionType
 ): QuestionsState {
   switch (action.type) {
-    case actionTypes.QUESTIONS_READALL:
-      return {
-        ...state,
-        Questions: loadTestData(),
-      };
     case actionTypes.QUESTIONS_GETQUESTIONSFROMAPI:
       return {
-        ...state
-      };
-    case actionTypes.QUESTIONS_READANSWERSFROMAPI:
-      return {
         ...state,
-        Questions: action.questions
+        Questions: action.questions,
       };
     case actionTypes.QUESTIONS_SELECTRANDOM:
       return {
@@ -68,8 +58,6 @@ export function loginReducer(state = initialLoginState, action: loginAction) {
   switch (action.type) {
     case loginActionTypes.NETWORK_ERROR:
       return { ...state, LastError: action.error };
-    case loginActionTypes.SIGN_IN:
-      return { ...state };
     case loginActionTypes.SIGNED_IN:
       return { ...state, Identity: action.identity };
     case loginActionTypes.SIGN_OUT:

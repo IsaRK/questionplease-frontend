@@ -5,19 +5,8 @@ import { Question } from "./questions";
 import { loadTestDataFromApi } from "./dataLoading";
 
 export type QuestionsAction =
-  | { type: actionTypes.QUESTIONS_READALL }
-  | { type: actionTypes.QUESTIONS_GETQUESTIONSFROMAPI }
+  | { type: actionTypes.QUESTIONS_GETQUESTIONSFROMAPI; questions: Question[] }
   | { type: actionTypes.QUESTIONS_SELECTRANDOM }
-  | { type: actionTypes.QUESTIONS_READANSWERSFROMAPI; questions: Question[] };
-
-//Un action est un object simple qui contient une propriété "type"
-// TypeScript infers that this function is returning selectAllQuestionsAction
-//Actions creators are functions that create and return action objects
-export function selectAllQuestionsAction(): QuestionsAction {
-  return {
-    type: actionTypes.QUESTIONS_READALL
-  }
-}
 
 export function selectRandomQuestionAction(): QuestionsAction {
   return {
@@ -25,15 +14,9 @@ export function selectRandomQuestionAction(): QuestionsAction {
   } as const
 }
 
-export function gettingQuestionAction(): QuestionsAction {
+export function gettingQuestionAction(questions: Question[]): QuestionsAction {
   return {
-    type: actionTypes.QUESTIONS_GETQUESTIONSFROMAPI
-  } as const
-}
-
-export function gotQuestionAction(questions: Question[]): QuestionsAction {
-  return {
-    type: actionTypes.QUESTIONS_READANSWERSFROMAPI,
+    type: actionTypes.QUESTIONS_GETQUESTIONSFROMAPI,
     questions: questions
   } as const
 }
@@ -57,8 +40,8 @@ export const getQuestionActionCreator: ActionCreator<ThunkAction<
   QuestionsAction
 >> = () => {
   return async (dispatch: Dispatch) => {
-    dispatch(gettingQuestionAction());
     const questions = await loadTestDataFromApi();
-    return dispatch(gotQuestionAction(questions));
+    dispatch(gettingQuestionAction(questions));
+    return dispatch(selectRandomQuestionAction());
   };
 };

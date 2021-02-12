@@ -1,24 +1,10 @@
-/*
-const AzureActiveDirectoryAppClientId: any =
-  process.env.REACT_APP_AZURE_ACTIVE_DIRECTORY_APP_CLIENT_ID;
-
-export const MSAL_CONFIG = {
-  "msal": {
-    "authority": "https://login.microsoftonline.com/common",
-    "clientId": AzureActiveDirectoryAppClientId,
-    "scopes": ["openid", "profile", "user.read"]
-  }
-}
-*/
-
-import { Configuration, LogLevel } from "@azure/msal-browser";
+import { Configuration, LogLevel, PopupRequest } from "@azure/msal-browser";
 
 const AzureActiveDirectoryAppClientId: any =
   process.env.REACT_APP_AZURE_ACTIVE_DIRECTORY_APP_CLIENT_ID;
 
 const AzureActiveDirectoryRedirectUri: any =
   process.env.REACT_APP_AZURE_ACTIVE_DIRECTORY_REDIRECT_URI;
-
 /* 
 reads your application ID in from the .env file
 sets session as the browser storage instead of cookies
@@ -29,6 +15,7 @@ export const MSAL_CONFIG: Configuration = {
   auth: {
     clientId: AzureActiveDirectoryAppClientId,
     redirectUri: AzureActiveDirectoryRedirectUri,
+    authority: "https://login.microsoftonline.com/common",
   },
   cache: {
     cacheLocation: "sessionStorage",
@@ -59,6 +46,8 @@ export const MSAL_CONFIG: Configuration = {
   },
 };
 
-//To get the token for a protected API, see this tutorial:
-//https://docs.microsoft.com/fr-fr/azure/active-directory/develop/tutorial-v2-javascript-auth-code
+// Add scopes here for ID token to be used at Microsoft identity platform endpoints.
+export const loginRequest: PopupRequest = {
+  scopes: ["openid", "profile", "User.Read"]
+};
 

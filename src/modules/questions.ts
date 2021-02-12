@@ -1,29 +1,26 @@
 export type QuestionsState = {
-    Questions : Question[] | null
-    SelectedQuestion : Question | null
-    AnswerResult : Boolean | null
+  Questions: Question[] | null
+  SelectedQuestion: Question | null
+  AnswerResult: Boolean | null
 };
 
-export class Question  {
-  constructor(id:number, interrogation: string, answer: string){
-      this.id = id;
-      this.interrogation = interrogation;
-      this.answer = answer;
+export class Question {
+  constructor(id: number, interrogation: string, answer: string) {
+    this.id = id;
+    this.interrogation = interrogation;
+    this.answer = answer;
   }
 
   id: number;
   interrogation: string;
   answer: string;
-  toString():string
-  {
-      return "[" + this.interrogation + " : " + this.answer + "]";
+  toString(): string {
+    return "[" + this.interrogation + " : " + this.answer + "]";
   }
 }
 
-export function selectRandomQuestion(questionsArray:Array<Question>|null): Question|null {
-  if (questionsArray === null)
-  {
-    //questionsArray = loadTestData();
+export function selectRandomQuestion(questionsArray: Array<Question> | null): Question | null {
+  if (questionsArray === null) {
     console.log("Error fetching data");
     return null;
   }

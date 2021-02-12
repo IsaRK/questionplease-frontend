@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React from "react";
 import { Button } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import { connect, useDispatch } from "react-redux";
@@ -35,24 +35,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
 export const UnconnectedQuestionComputer: React.FunctionComponent<IProps> = ({
   selectedQuestion,
   getQuestions,
-  selectRandomQuestionAction,
 }) => {
-  //https://stackoverflow.com/questions/55840294/how-to-fix-missing-dependency-warning-when-using-useeffect-react-hook
-  //On utilise une callback pour garder la reference de la function
-  const getQuestionsCallback = useCallback(
-    () => {
-      getQuestions();
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
-
-  //On utilise la callback pour l'effet de memoization : on ne va appeler getQuestionsCallback que si la reference à
-  //getQuestionsCallback change, c'est à dire jamais.
-  useEffect(() => {
-    getQuestionsCallback();
-  }, [getQuestionsCallback]);
-
   //useDispatch returns a function that we name dispatch
   //We then invoke actions using dispatch by passing our action creators into it
   const dispatch = useDispatch();
@@ -62,7 +45,9 @@ export const UnconnectedQuestionComputer: React.FunctionComponent<IProps> = ({
       <Box display="flex" justifyContent="center">
         <Button
           variant="contained"
-          onClick={() => dispatch(selectRandomQuestionAction)}
+          onClick={() => {
+            dispatch(getQuestions);
+          }}
           disabled={false}
         >
           Question Please
