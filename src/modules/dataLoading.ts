@@ -1,5 +1,4 @@
 //import { results as testDataQuestions } from '../data/data.json';
-import { AuthenticationResult } from '@azure/msal-browser';
 import { authService } from '../services/auth-service';
 import { Question } from './questions';
 

@@ -12,7 +12,6 @@ import { loginRequest, MSAL_CONFIG } from "./config";
 
 //From
 //https://docs.microsoft.com/fr-fr/azure/active-directory/develop/tutorial-v2-javascript-auth-code
-//autre exemple : https://github.com/AzureAD/microsoft-authentication-library-for-js/issues/2254
 class AuthService {
 
     constructor() {

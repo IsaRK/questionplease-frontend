@@ -3,8 +3,9 @@ import { Configuration, LogLevel, PopupRequest } from "@azure/msal-browser";
 const AzureActiveDirectoryAppClientId: any =
   process.env.REACT_APP_AZURE_ACTIVE_DIRECTORY_APP_CLIENT_ID;
 
-const AzureActiveDirectoryRedirectUri: any =
-  process.env.REACT_APP_AZURE_ACTIVE_DIRECTORY_REDIRECT_URI;
+const AzureActiveDirectoryApiTenantId: any =
+  process.env.REACT_APP_AZURE_ACTIVE_DIRECTORY_APP_TENANT_ID;
+
 /* 
 reads your application ID in from the .env file
 sets session as the browser storage instead of cookies
@@ -14,8 +15,8 @@ provides logging that is considerate of personal information.
 export const MSAL_CONFIG: Configuration = {
   auth: {
     clientId: AzureActiveDirectoryAppClientId,
-    redirectUri: AzureActiveDirectoryRedirectUri,
-    authority: "https://login.microsoftonline.com/common",
+    redirectUri: process.env.REACT_APP_AZURE_ACTIVE_DIRECTORY_REDIRECT_URI,
+    authority: AzureActiveDirectoryApiTenantId,
   },
   cache: {
     cacheLocation: "sessionStorage",
@@ -46,8 +47,7 @@ export const MSAL_CONFIG: Configuration = {
   },
 };
 
-// Add scopes here for ID token to be used at Microsoft identity platform endpoints.
 export const loginRequest: PopupRequest = {
-  scopes: ["openid", "profile", "User.Read"]
+  scopes: ["openid", "profile", "https://questionplease-api.azurewebsites.net/user_impersonation"]
 };
 
