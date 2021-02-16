@@ -3,7 +3,7 @@ import { HttpResponse } from "../modules/dataLoading";
 import { authService } from "./auth-service";
 
 export interface IUserInfo {
-    HomeAccountId: string,
+    homeAccountId: string,
     login: string
 }
 
@@ -15,7 +15,7 @@ class UserService {
 
     homeAccountId: string;
 
-    url = 'https://questionplease-api.azurewebsites.net/api/user/login';
+    url = 'https://questionplease-api.azurewebsites.net/api/user';
 
     async getOptions(verb: string, userInfo: IUserInfo | undefined) {
         const headers = new Headers();
