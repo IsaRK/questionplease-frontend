@@ -44,7 +44,7 @@ export default class Identity {
 
     userInfo = (login: string): IUserInfo => {
         if (this.account?.homeAccountId) {
-            return { HomeAccountId: this.account?.homeAccountId, login }
+            return { homeAccountId: this.account?.homeAccountId, login }
 
         }
         throw new Error("Unable to find homeAccountId");
