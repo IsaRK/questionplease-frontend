@@ -54,7 +54,7 @@ export function questionsReducer(
 
 const initialLoginState: LoginState = { Identity: null, LastError: null };
 
-export function loginReducer(state = initialLoginState, action: loginAction) {
+export function loginReducer(state = initialLoginState, action: loginAction): LoginState {
   switch (action.type) {
     case loginActionTypes.NETWORK_ERROR:
       return { ...state, LastError: action.error };
@@ -62,6 +62,8 @@ export function loginReducer(state = initialLoginState, action: loginAction) {
       return { ...state, Identity: action.identity };
     case loginActionTypes.SIGN_OUT:
       return { ...state, Identity: null };
+    case loginActionTypes.LOGINSET:
+      return { ...state, Identity: action.identity };
     default:
       return state;
   }

@@ -25,8 +25,7 @@ export function selectRandomQuestion(questionsArray: Array<Question> | null): Qu
     return null;
   }
 
-  var max = questionsArray.length;
-  var randomIndex = Math.floor(Math.random() * (max + 1));
+  var randomIndex = Math.floor(Math.random() * questionsArray.length);
   let result = questionsArray[randomIndex];
   console.log("Selected Question is" + result.toString());
   return result;

@@ -1,4 +1,3 @@
-//import { results as testDataQuestions } from '../data/data.json';
 import { authService } from '../services/auth-service';
 import { Question } from './questions';
 
@@ -21,7 +20,7 @@ function getNextId(questionsArray: Array<Question>): number {
   return 1 + Math.max(...questionsArray.map((p) => p.id));
 }
 
-interface HttpResponse<T> extends Response {
+export interface HttpResponse<T> extends Response {
   parsedBody?: T;
 }
 
@@ -51,10 +50,6 @@ export async function loadTestDataFromApi(): Promise<Question[]> {
 }
 
 export async function getQuestionsFromAPI<T>(): Promise<HttpResponse<T>> {
-
-  //Pour faire un refresh silencieux si le token est expiré :
-  //https://docs.microsoft.com/en-us/azure/app-service/app-service-authentication-how-to#refresh-identity-provider-tokens
-
   const headers = new Headers();
   const token = await authService.getTokenPopup();
 

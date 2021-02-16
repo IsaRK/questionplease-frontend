@@ -4,6 +4,7 @@
  */
 
 import { AccountInfo } from "@azure/msal-browser";
+import UserService, { IUserInfo } from "../services/userService";
 
 export type LoginState = {
     Identity: Identity | null
@@ -12,18 +13,40 @@ export type LoginState = {
 
 export default class Identity {
     account: AccountInfo | undefined;
+    login: string | undefined;
+    userService: UserService;
 
-    constructor(accountInfo: AccountInfo | undefined) {
+    constructor(accountInfo: AccountInfo, login: string | undefined) {
         this.account = accountInfo;
+        this.userService = new UserService(accountInfo);
+        this.login = login;
     }
 
-    get userId() {
-        if (this.account) return this.account.homeAccountId;
-        else return null;
+    async getUserInfo(): Promise<IUserInfo> {
+        if (!this.account) {
+            throw new Error("Unable to retrieve account");
+        }
+
+        return this.userService.getLogin();
     }
 
-    get name() {
-        if (this.account) return this.account.name;
-        else return null;
+    async createLogin(newLogin: string) {
+        await this.userService.createLogin(this.userInfo(newLogin));
+        this.login = newLogin;
+        return this;
+    }
+
+    async updateLogin(newLogin: string) {
+        await this.userService.updateLogin(this.userInfo(newLogin));
+        this.login = newLogin;
+        return this;
+    }
+
+    userInfo = (login: string): IUserInfo => {
+        if (this.account?.homeAccountId) {
+            return { HomeAccountId: this.account?.homeAccountId, login }
+
+        }
+        throw new Error("Unable to find homeAccountId");
     }
 }
