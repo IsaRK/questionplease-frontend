@@ -3,7 +3,7 @@ import { HttpResponse } from "../modules/dataLoading";
 import { authService } from "./auth-service";
 
 export interface IUserInfo {
-    homeAccountId: string,
+    id: number,
     login: string
 }
 
@@ -17,7 +17,7 @@ class UserService {
 
     url = 'https://questionplease-api.azurewebsites.net/api/user';
 
-    async getOptions(verb: string, userInfo: IUserInfo | undefined) {
+    async getOptions(verb: string) {
         const headers = new Headers();
         const token = await authService.getTokenPopup();
 
@@ -28,6 +28,7 @@ class UserService {
         const bearer = `Bearer ${token.accessToken}`;
         headers.append("Authorization", bearer);
 
+        /*
         if (userInfo) {
             return {
                 method: verb,
@@ -35,6 +36,7 @@ class UserService {
                 body: JSON.stringify(userInfo)
             };
         }
+        */
 
         return {
             method: verb,
@@ -56,7 +58,7 @@ class UserService {
 
     async getLogin(): Promise<IUserInfo> {
         try {
-            const options = await this.getOptions("GET", undefined);
+            const options = await this.getOptions("GET");
             const response: HttpResponse<IUserInfo> = await fetch(this.url, options);
             response.parsedBody = await response.json();
             return this.extractResponse(response);
@@ -66,22 +68,26 @@ class UserService {
         }
     }
 
-    async createLogin(userInfo: IUserInfo): Promise<void> {
+    async createLogin(newLogin: string): Promise<IUserInfo> {
         try {
-            const options = await this.getOptions("PUT", userInfo);
-            const response: HttpResponse<IUserInfo> = await fetch(this.url, options);
+            const options = await this.getOptions("PUT");
+            var queryParams = new URLSearchParams({ login: newLogin });
+
+            const response: HttpResponse<IUserInfo> = await fetch(this.url + queryParams, options);
             response.parsedBody = await response.json();
-            this.extractResponse(response);
+            return this.extractResponse(response);
         }
         catch (ex) {
             throw new Error("Error when fetching UserInfo");
         }
     }
 
-    async updateLogin(userInfo: IUserInfo): Promise<void> {
+    async updateLogin(id: number, newLogin: string): Promise<void> {
         try {
-            const options = await this.getOptions("POST", userInfo);
-            const response: HttpResponse<IUserInfo> = await fetch(this.url, options);
+            const options = await this.getOptions("POST");
+            var queryParams = new URLSearchParams({ id: id.toString(), login: newLogin });
+
+            const response: HttpResponse<IUserInfo> = await fetch(this.url + queryParams, options);
             response.parsedBody = await response.json();
             this.extractResponse(response);
         }

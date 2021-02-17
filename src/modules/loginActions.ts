@@ -43,10 +43,11 @@ export function signIn() {
 }
 
 export async function setNewIdentity(dispatch: any, accountInfo: AccountInfo) {
-    const result = new Identity(accountInfo, undefined);
+    const result = new Identity(accountInfo, undefined, undefined);
     try {
         const userInfo = await result.getUserInfo();
         result.login = userInfo.login;
+        result.id = userInfo.id;
         dispatch(signedInActionCreator(result));
     } catch (error) {
         dispatch(networkError(error));

@@ -14,12 +14,14 @@ export type LoginState = {
 export default class Identity {
     account: AccountInfo | undefined;
     login: string | undefined;
+    id: number | undefined;
     userService: UserService;
 
-    constructor(accountInfo: AccountInfo, login: string | undefined) {
+    constructor(accountInfo: AccountInfo, login: string | undefined, id: number | undefined) {
         this.account = accountInfo;
         this.userService = new UserService(accountInfo);
         this.login = login;
+        this.id = id;
     }
 
     async getUserInfo(): Promise<IUserInfo> {
@@ -31,22 +33,19 @@ export default class Identity {
     }
 
     async createLogin(newLogin: string) {
-        await this.userService.createLogin(this.userInfo(newLogin));
-        this.login = newLogin;
+        const userInfo = await this.userService.createLogin(newLogin);
+        this.login = userInfo.login;
+        this.id = userInfo.id;
         return this;
     }
 
     async updateLogin(newLogin: string) {
-        await this.userService.updateLogin(this.userInfo(newLogin));
+        if (this.id === undefined) {
+            throw new Error("Unable to update login with undefined Id");
+        }
+
+        await this.userService.updateLogin(this.id, newLogin);
         this.login = newLogin;
         return this;
-    }
-
-    userInfo = (login: string): IUserInfo => {
-        if (this.account?.homeAccountId) {
-            return { homeAccountId: this.account?.homeAccountId, login }
-
-        }
-        throw new Error("Unable to find homeAccountId");
     }
 }
