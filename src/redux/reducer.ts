@@ -1,9 +1,9 @@
 import { combineReducers } from 'redux';
-import { actionTypes } from "./actionTypes"
+import { actionTypes } from "./questionsActions"
 import { AnswerAction, validateAnswer } from './answerActions';
-import { LoginState } from './identity';
+import { LoginState } from '../models/identity';
 import { loginAction, loginActionTypes } from './loginActions';
-import { QuestionsState, selectRandomQuestion } from './questions';
+import { QuestionsState, selectRandomQuestion } from '../models/questions';
 import { QuestionsAction } from './questionsActions';
 
 const initialQuestionsState: QuestionsState = { Questions: null, SelectedQuestion: null, AnswerResult: null };

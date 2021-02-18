@@ -4,10 +4,10 @@ import { Form, Formik } from "formik";
 import Button from "@material-ui/core/Button";
 import { Box } from "@material-ui/core";
 import { useStyles } from "../App";
-import { RootState } from "../modules/reducer";
+import { RootState } from "../redux/reducer";
 import { useDispatch, useSelector } from "react-redux";
-import { Question } from "../modules/questions";
-import { validateAnswerAction } from "../modules/answerActions";
+import { Question } from "../models/questions";
+import { validateAnswerAction } from "../redux/answerActions";
 import { AnswerResult } from "./AnswerResult";
 
 export const AnswerForm: React.FunctionComponent = () => {

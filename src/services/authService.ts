@@ -8,7 +8,7 @@ import {
     InteractionRequiredAuthError,
 } from "@azure/msal-browser";
 
-import { loginRequest, MSAL_CONFIG } from "./config";
+import { loginRequest, MSAL_CONFIG } from "./authConfig";
 
 //From
 //https://docs.microsoft.com/fr-fr/azure/active-directory/develop/tutorial-v2-javascript-auth-code

@@ -1,8 +1,15 @@
-import { actionTypes } from "./actionTypes"
 import { ActionCreator, Dispatch } from 'redux';
 import { ThunkAction } from 'redux-thunk';
-import { Question } from "./questions";
-import { loadTestDataFromApi } from "./dataLoading";
+import { Question } from "../models/questions";
+import { loadTestDataFromApi } from '../services/questionService';
+
+export enum actionTypes {
+  QUESTIONS_GETQUESTIONSFROMAPI = 'questions/QUESTIONS_GETQUESTIONSFROMAPI',
+  QUESTIONS_SELECTRANDOM = 'question/SELECTRANDOM',
+  ANSWER_VALIDATE = 'answer/VALIDATE',
+  ANSWER_NEXTQUESTION = 'answer/NEXTQUESTION',
+  ANSWER_RETRY = 'answer/RETRY',
+}
 
 export type QuestionsAction =
   | { type: actionTypes.QUESTIONS_GETQUESTIONSFROMAPI; questions: Question[] }

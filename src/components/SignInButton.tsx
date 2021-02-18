@@ -1,38 +1,16 @@
 import React from "react";
-import { connect, useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { RootState } from "../modules/reducer";
-import { setLoginAction, signIn, signOut } from "../modules/loginActions";
-import { authService } from "../services/auth-service";
+import { RootState } from "../redux/reducer";
+import { setLoginAction, signIn, signOut } from "../redux/loginActions";
+import { authService } from "../services/authService";
 import { Box, Button, TextField } from "@material-ui/core";
 import { Form, Formik } from "formik";
 import { useStyles } from "../App";
-import Identity from "../modules/identity";
 
-interface IProps {
-  identity: Identity | null;
-}
-
-const mapStateToProps = (state: RootState) => ({
-  identity: state.loginState.Identity,
-});
-
-const mapDispatchToProps = (dispatch: any) => {
-  return {
-    signOut: () => dispatch(signOut()),
-    signIn: () => dispatch(signIn()),
-    setLoginAction: (newLogin: string, identity: Identity) =>
-      dispatch(setLoginAction(newLogin, identity)),
-  };
-};
-
-export const UnconnectedSignInButton: React.FunctionComponent<IProps> = ({
-  identity,
-}) => {
-  /*
+export const SignInButton: React.FunctionComponent = () => {
   const identity = useSelector((state: RootState) => state.loginState.Identity);
-  
-  */
+
   const dispatch = useDispatch();
   const styleClass = useStyles();
 
@@ -83,9 +61,4 @@ export const UnconnectedSignInButton: React.FunctionComponent<IProps> = ({
   );
 };
 
-//export default SignInButton;
-
-export const SignInButton = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(UnconnectedSignInButton);
+export default SignInButton;

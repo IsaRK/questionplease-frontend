@@ -1,6 +1,6 @@
 import { AccountInfo } from "@azure/msal-browser";
-import { authService } from "../services/auth-service";
-import Identity from "./identity";
+import { authService } from "../services/authService";
+import Identity from "../models/identity";
 
 //Login action identifier
 export enum loginActionTypes {

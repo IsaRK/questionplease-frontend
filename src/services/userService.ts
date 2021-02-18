@@ -1,7 +1,5 @@
 import { AccountInfo } from "@azure/msal-browser";
-import { STATUS_CODES } from "http";
-import { HttpResponse } from "../modules/dataLoading";
-import { authService } from "./auth-service";
+import { getOptions, HttpResponse } from "./serviceHelper";
 
 export interface IUserInfo {
     id: number,
@@ -18,33 +16,6 @@ class UserService {
 
     url = 'https://questionplease-api.azurewebsites.net/api/user/';
 
-    async getOptions(verb: string) {
-        const headers = new Headers();
-        const token = await authService.getTokenPopup();
-
-        if (!token) {
-            throw new Error("Undefined Token");
-        }
-
-        const bearer = `Bearer ${token.accessToken}`;
-        headers.append("Authorization", bearer);
-
-        /*
-        if (userInfo) {
-            return {
-                method: verb,
-                headers: headers,
-                body: JSON.stringify(userInfo)
-            };
-        }
-        */
-
-        return {
-            method: verb,
-            headers: headers,
-        };
-    }
-
     extractResponse(response: HttpResponse<IUserInfo | null>): IUserInfo | null {
         if (!response.ok) {
             throw new Error(response.statusText);
@@ -59,7 +30,7 @@ class UserService {
 
     async getLogin(): Promise<IUserInfo | null> {
         try {
-            const options = await this.getOptions("GET");
+            const options = await getOptions("GET");
             const response: HttpResponse<IUserInfo> = await fetch(this.url, options);
 
             if (response.status === 204)//No content
@@ -77,7 +48,7 @@ class UserService {
 
     async createLogin(newLogin: string): Promise<IUserInfo | null> {
         try {
-            const options = await this.getOptions("PUT");
+            const options = await getOptions("PUT");
             //var queryParams = new URLSearchParams({ login: newLogin }); >> await fetch(this.url + queryParams, options);
             var completeUrl = new URL(newLogin, this.url);
 
@@ -92,7 +63,7 @@ class UserService {
 
     async updateLogin(id: number, newLogin: string): Promise<void> {
         try {
-            const options = await this.getOptions("POST");
+            const options = await getOptions("POST");
             var completeUrl = new URL(this.url);
             completeUrl.pathname = id + "/" + newLogin;
 

@@ -8,7 +8,7 @@ import { createLogger } from "redux-logger";
 
 import { Provider } from "react-redux";
 import { createStore, applyMiddleware } from "redux";
-import { rootReducer } from "./modules/reducer";
+import { rootReducer } from "./redux/reducer";
 import { composeWithDevTools } from "redux-devtools-extension";
 
 const logger = createLogger({ collapsed: true });
