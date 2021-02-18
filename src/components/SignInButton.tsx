@@ -1,5 +1,5 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { connect, useDispatch, useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { RootState } from "../modules/reducer";
 import { setLoginAction, signIn, signOut } from "../modules/loginActions";
@@ -7,11 +7,33 @@ import { authService } from "../services/auth-service";
 import { Box, Button, TextField } from "@material-ui/core";
 import { Form, Formik } from "formik";
 import { useStyles } from "../App";
+import Identity from "../modules/identity";
 
-const SignInButton: React.FunctionComponent = () => {
+interface IProps {
+  identity: Identity | null;
+}
+
+const mapStateToProps = (state: RootState) => ({
+  identity: state.loginState.Identity,
+});
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    signOut: () => dispatch(signOut()),
+    signIn: () => dispatch(signIn()),
+    setLoginAction: (newLogin: string, identity: Identity) =>
+      dispatch(setLoginAction(newLogin, identity)),
+  };
+};
+
+export const UnconnectedSignInButton: React.FunctionComponent<IProps> = ({
+  identity,
+}) => {
+  /*
   const identity = useSelector((state: RootState) => state.loginState.Identity);
+  
+  */
   const dispatch = useDispatch();
-
   const styleClass = useStyles();
 
   const onClickHandler = () => {
@@ -20,14 +42,14 @@ const SignInButton: React.FunctionComponent = () => {
 
   const addLogin = (newLogin: string) => {
     if (!!identity) {
-      dispatch(setLoginAction(newLogin));
+      dispatch(setLoginAction(newLogin, identity));
     }
   };
 
   const buttonText = identity ? "Sign out" : "Sign in";
   const longText = `${buttonText} with ${authService.serviceName}`;
 
-  if (identity && !identity.login) {
+  if (identity != null && identity.login === undefined) {
     return (
       <Box className={styleClass.root}>
         <Formik
@@ -61,4 +83,9 @@ const SignInButton: React.FunctionComponent = () => {
   );
 };
 
-export default SignInButton;
+//export default SignInButton;
+
+export const SignInButton = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(UnconnectedSignInButton);

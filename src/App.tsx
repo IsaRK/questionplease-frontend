@@ -4,7 +4,7 @@ import "./App.css";
 import { QuestionComputer } from "./components/QuestionComputer";
 import { AnswerForm } from "./components/AnswerForm";
 import { makeStyles } from "@material-ui/core/styles";
-import SignInButton from "./components/SignInButton";
+import { SignInButton } from "./components/SignInButton";
 
 export const useStyles = makeStyles((theme) => ({
   root: {

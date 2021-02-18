@@ -12,10 +12,12 @@ import {
 import { ThunkDispatch } from "redux-thunk";
 import { AnyAction } from "redux";
 import { Question } from "../modules/questions";
+import Identity from "../modules/identity";
 
 interface IProps {
   questions: Question[] | null;
   selectedQuestion: Question | null;
+  identity: Identity | null;
   getQuestions: () => Promise<QuestionsAction>;
   selectRandomQuestionAction: () => QuestionsAction;
 }
@@ -23,6 +25,7 @@ interface IProps {
 const mapStateToProps = (state: RootState) => ({
   questions: state.questionsState.Questions,
   selectedQuestion: state.questionsState.SelectedQuestion,
+  identity: state.loginState.Identity,
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
@@ -34,15 +37,26 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
 
 export const UnconnectedQuestionComputer: React.FunctionComponent<IProps> = ({
   selectedQuestion,
+  identity,
   getQuestions,
 }) => {
   //useDispatch returns a function that we name dispatch
   //We then invoke actions using dispatch by passing our action creators into it
   const dispatch = useDispatch();
 
+  let textValue = null;
+  if (identity === null) {
+    textValue = "null identity";
+  } else if (identity.login === undefined) {
+    textValue = "undefined login";
+  } else {
+    textValue = identity.login;
+  }
+
   if (selectedQuestion == null) {
     return (
       <Box display="flex" justifyContent="center">
+        <label>{textValue}</label>
         <Button
           variant="contained"
           onClick={() => {

@@ -1,4 +1,5 @@
 import { AccountInfo } from "@azure/msal-browser";
+import { STATUS_CODES } from "http";
 import { HttpResponse } from "../modules/dataLoading";
 import { authService } from "./auth-service";
 
@@ -15,7 +16,7 @@ class UserService {
 
     homeAccountId: string;
 
-    url = 'https://questionplease-api.azurewebsites.net/api/user';
+    url = 'https://questionplease-api.azurewebsites.net/api/user/';
 
     async getOptions(verb: string) {
         const headers = new Headers();
@@ -44,7 +45,7 @@ class UserService {
         };
     }
 
-    extractResponse(response: HttpResponse<IUserInfo>): IUserInfo {
+    extractResponse(response: HttpResponse<IUserInfo | null>): IUserInfo | null {
         if (!response.ok) {
             throw new Error(response.statusText);
         }
@@ -56,10 +57,16 @@ class UserService {
         return response.parsedBody;
     }
 
-    async getLogin(): Promise<IUserInfo> {
+    async getLogin(): Promise<IUserInfo | null> {
         try {
             const options = await this.getOptions("GET");
             const response: HttpResponse<IUserInfo> = await fetch(this.url, options);
+
+            if (response.status === 204)//No content
+            {
+                return null;
+            }
+
             response.parsedBody = await response.json();
             return this.extractResponse(response);
         }
@@ -68,12 +75,13 @@ class UserService {
         }
     }
 
-    async createLogin(newLogin: string): Promise<IUserInfo> {
+    async createLogin(newLogin: string): Promise<IUserInfo | null> {
         try {
             const options = await this.getOptions("PUT");
-            var queryParams = new URLSearchParams({ login: newLogin });
+            //var queryParams = new URLSearchParams({ login: newLogin }); >> await fetch(this.url + queryParams, options);
+            var completeUrl = new URL(newLogin, this.url);
 
-            const response: HttpResponse<IUserInfo> = await fetch(this.url + queryParams, options);
+            const response: HttpResponse<IUserInfo> = await fetch(completeUrl.toString(), options);
             response.parsedBody = await response.json();
             return this.extractResponse(response);
         }
@@ -85,9 +93,10 @@ class UserService {
     async updateLogin(id: number, newLogin: string): Promise<void> {
         try {
             const options = await this.getOptions("POST");
-            var queryParams = new URLSearchParams({ id: id.toString(), login: newLogin });
+            var completeUrl = new URL(this.url);
+            completeUrl.pathname = id + "/" + newLogin;
 
-            const response: HttpResponse<IUserInfo> = await fetch(this.url + queryParams, options);
+            const response: HttpResponse<IUserInfo> = await fetch(completeUrl.toString(), options);
             response.parsedBody = await response.json();
             this.extractResponse(response);
         }

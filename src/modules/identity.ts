@@ -24,7 +24,7 @@ export default class Identity {
         this.id = id;
     }
 
-    async getUserInfo(): Promise<IUserInfo> {
+    async getUserInfo(): Promise<IUserInfo | null> {
         if (!this.account) {
             throw new Error("Unable to retrieve account");
         }
@@ -34,9 +34,12 @@ export default class Identity {
 
     async createLogin(newLogin: string) {
         const userInfo = await this.userService.createLogin(newLogin);
-        this.login = userInfo.login;
-        this.id = userInfo.id;
-        return this;
+
+        if (userInfo === null) {
+            throw new Error("UserInfo should not be null when creating a login");
+        }
+
+        return { ...this, login: userInfo.login, id: userInfo.id }
     }
 
     async updateLogin(newLogin: string) {
@@ -45,7 +48,6 @@ export default class Identity {
         }
 
         await this.userService.updateLogin(this.id, newLogin);
-        this.login = newLogin;
-        return this;
+        return { ...this, login: newLogin }
     }
 }

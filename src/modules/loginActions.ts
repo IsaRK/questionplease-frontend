@@ -1,7 +1,6 @@
 import { AccountInfo } from "@azure/msal-browser";
 import { authService } from "../services/auth-service";
 import Identity from "./identity";
-import { RootState } from "./reducer";
 
 //Login action identifier
 export enum loginActionTypes {
@@ -46,8 +45,11 @@ export async function setNewIdentity(dispatch: any, accountInfo: AccountInfo) {
     const result = new Identity(accountInfo, undefined, undefined);
     try {
         const userInfo = await result.getUserInfo();
-        result.login = userInfo.login;
-        result.id = userInfo.id;
+        if (userInfo !== null) {
+            result.login = userInfo.login;
+            result.id = userInfo.id;
+        }
+
         dispatch(signedInActionCreator(result));
     } catch (error) {
         dispatch(networkError(error));
@@ -66,9 +68,8 @@ export function signOut() {
     };
 }
 
-export function setLoginAction(newLogin: string) {
-    return async function (dispatch: any, getState: RootState) {
-        const currentIdentity = getState.loginState.Identity;
+export function setLoginAction(newLogin: string, currentIdentity: Identity) {
+    return async function (dispatch: any) {
 
         try {
             if (currentIdentity == null) {
@@ -76,7 +77,7 @@ export function setLoginAction(newLogin: string) {
             }
 
             let newIdentity: Identity;
-            if (!currentIdentity?.login) {
+            if (!currentIdentity.login === undefined) {
                 newIdentity = await currentIdentity.updateLogin(newLogin);
             } else {
                 newIdentity = await currentIdentity.createLogin(newLogin);
