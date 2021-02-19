@@ -48,9 +48,12 @@ export async function setNewIdentity(dispatch: any, accountInfo: AccountInfo) {
         if (userInfo !== null) {
             result.login = userInfo.login;
             result.id = userInfo.id;
+            dispatch(loginSetActionCreator(result));
+        }
+        else {
+            dispatch(signedInActionCreator(result));
         }
 
-        dispatch(signedInActionCreator(result));
     } catch (error) {
         dispatch(networkError(error));
     }

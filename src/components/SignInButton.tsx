@@ -7,9 +7,11 @@ import { authService } from "../services/authService";
 import { Box, Button, TextField } from "@material-ui/core";
 import { Form, Formik } from "formik";
 import { useStyles } from "../App";
+import { Label } from "@material-ui/icons";
 
 export const SignInButton: React.FunctionComponent = () => {
   const identity = useSelector((state: RootState) => state.loginState.Identity);
+  const isLogged = useSelector((state: RootState) => state.loginState.IsLogged);
 
   const dispatch = useDispatch();
   const styleClass = useStyles();
@@ -53,11 +55,17 @@ export const SignInButton: React.FunctionComponent = () => {
   }
 
   return (
-    <button type="button" onClick={onClickHandler}>
-      <FontAwesomeIcon icon={authService.icon} />
-      <span>{buttonText}</span>
-      <span>{longText}</span>
-    </button>
+    <div>
+      <div>
+        {isLogged ? <label>{"Welcome " + identity?.login}</label> : <div />}
+      </div>
+
+      <button type="button" onClick={onClickHandler}>
+        <FontAwesomeIcon icon={authService.icon} />
+        <span>{buttonText}</span>
+        <span>{longText}</span>
+      </button>
+    </div>
   );
 };
 

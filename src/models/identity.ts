@@ -9,6 +9,7 @@ import UserService, { IUserInfo } from "../services/userService";
 export type LoginState = {
     Identity: Identity | null
     LastError: Error | null
+    IsLogged: boolean
 };
 
 export default class Identity {

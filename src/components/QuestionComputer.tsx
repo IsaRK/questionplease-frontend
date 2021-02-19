@@ -14,11 +14,13 @@ import { Question } from "../models/questions";
 
 interface IProps {
   selectedQuestion: Question | null;
+  isLogged: boolean;
   getQuestions: () => Promise<QuestionsAction>;
 }
 
 const mapStateToProps = (state: RootState) => ({
   selectedQuestion: state.questionsState.SelectedQuestion,
+  isLogged: state.loginState.IsLogged,
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
@@ -29,11 +31,16 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
 
 export const UnconnectedQuestionComputer: React.FunctionComponent<IProps> = ({
   selectedQuestion,
+  isLogged,
   getQuestions,
 }) => {
   //useDispatch returns a function that we name dispatch
   //We then invoke actions using dispatch by passing our action creators into it
   const dispatch = useDispatch();
+
+  if (!isLogged) {
+    return <div />;
+  }
 
   if (selectedQuestion == null) {
     return (

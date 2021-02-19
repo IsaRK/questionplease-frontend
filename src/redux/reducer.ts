@@ -52,7 +52,7 @@ export function questionsReducer(
   }
 }
 
-const initialLoginState: LoginState = { Identity: null, LastError: null };
+const initialLoginState: LoginState = { Identity: null, LastError: null, IsLogged: false };
 
 export function loginReducer(state = initialLoginState, action: loginAction): LoginState {
   switch (action.type) {
@@ -63,7 +63,7 @@ export function loginReducer(state = initialLoginState, action: loginAction): Lo
     case loginActionTypes.SIGN_OUT:
       return { ...state, Identity: null };
     case loginActionTypes.LOGINSET:
-      return { ...state, Identity: action.identity };
+      return { ...state, Identity: action.identity, IsLogged: true };
     default:
       return state;
   }
