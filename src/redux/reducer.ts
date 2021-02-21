@@ -1,12 +1,14 @@
 import { combineReducers } from 'redux';
-import { actionTypes } from "./questionsActions"
-import { AnswerAction, validateAnswer } from './answerActions';
+import { AnswerAction, answerActionTypes } from './answerActions';
 import { LoginState } from '../models/identity';
 import { loginAction, loginActionTypes } from './loginActions';
-import { QuestionsState, selectRandomQuestion } from '../models/questions';
-import { QuestionsAction } from './questionsActions';
+import { QuestionsState } from '../models/questions';
+import { questionActionTypes, QuestionsAction } from './questionsActions';
+import Leaderboard from '../components/Leaderboard';
+import { LeaderboardState } from '../models/leaderboard';
+import { leaderboardAction, leaderboardActionTypes } from './leaderboardActions';
 
-const initialQuestionsState: QuestionsState = { Questions: null, SelectedQuestion: null, AnswerResult: null };
+const initialQuestionsState: QuestionsState = { SelectedQuestion: null, UserAnswerResult: null, IsValidAnswer: false, Points: 0 };
 export type QuestionsActionType = QuestionsAction | AnswerAction;
 
 //Le reducer est une function pure :
@@ -21,38 +23,41 @@ export function questionsReducer(
   action: QuestionsActionType
 ): QuestionsState {
   switch (action.type) {
-    case actionTypes.QUESTIONS_GETQUESTIONSFROMAPI:
+    case questionActionTypes.QUESTIONS_GOTNEXTQUESTION:
       return {
         ...state,
-        Questions: action.questions,
+        SelectedQuestion: action.nextQuestion,
       };
-    case actionTypes.QUESTIONS_SELECTRANDOM:
+    case answerActionTypes.ANSWER_RIGHTANSWER:
       return {
         ...state,
-        SelectedQuestion: selectRandomQuestion(state.Questions),
+        UserAnswerResult: action.userAnswer,
+        Points: action.points,
+        IsValidAnswer: true
       };
-    case actionTypes.ANSWER_VALIDATE:
+    case answerActionTypes.ANSWER_WRONGANSWER:
       return {
         ...state,
-        AnswerResult: validateAnswer(state.SelectedQuestion?.answer, action.userAnswer)
+        UserAnswerResult: action.userAnswer,
+        IsValidAnswer: false
       };
-    case actionTypes.ANSWER_NEXTQUESTION:
+    case questionActionTypes.QUESTIONS_RETRY:
       return {
         ...state,
-        AnswerResult: null,
-        SelectedQuestion: selectRandomQuestion(state.Questions)
+        UserAnswerResult: null
       };
-    case actionTypes.ANSWER_RETRY:
+    case questionActionTypes.QUESTIONS_ABANDON:
       return {
         ...state,
-        AnswerResult: null
+        IsValidAnswer: false,
+        UserAnswerResult: null
       };
     default:
       return state;
   }
 }
 
-const initialLoginState: LoginState = { Identity: null, LastError: null, IsLogged: false };
+const initialLoginState: LoginState = { Identity: null, LastError: null, IsLogged: false, Score: 0 };
 
 export function loginReducer(state = initialLoginState, action: loginAction): LoginState {
   switch (action.type) {
@@ -64,6 +69,23 @@ export function loginReducer(state = initialLoginState, action: loginAction): Lo
       return { ...state, Identity: null };
     case loginActionTypes.LOGINSET:
       return { ...state, Identity: action.identity, IsLogged: true };
+    case loginActionTypes.SCOREUPDATE:
+      return { ...state, Score: action.newScore };
+    default:
+      return state;
+  }
+}
+
+const initialLeaderboardState: LeaderboardState = { TopUsers: [], MinScore: 0 };
+
+export function leaderboardReducer(state = initialLeaderboardState, action: leaderboardAction): LeaderboardState {
+  switch (action.type) {
+    case leaderboardActionTypes.LEADERBOARD_SET:
+      return {
+        ...state,
+        TopUsers: action.topUsers,
+        MinScore: action.minScore
+      };
     default:
       return state;
   }
@@ -72,6 +94,7 @@ export function loginReducer(state = initialLoginState, action: loginAction): Lo
 export const rootReducer = combineReducers({
   questionsState: questionsReducer,
   loginState: loginReducer,
+  leaderboardState: leaderboardReducer
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

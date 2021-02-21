@@ -1,13 +1,15 @@
 import { AccountInfo } from "@azure/msal-browser";
 import { authService } from "../services/authService";
 import Identity from "../models/identity";
+import { finalizeSetLogin } from "./leaderboardActions";
 
 //Login action identifier
 export enum loginActionTypes {
     NETWORK_ERROR = 'network/ERROR',
     SIGNED_IN = 'login/SIGNEDIN',
     SIGN_OUT = 'login/SIGNOUT',
-    LOGINSET = 'login/LOGINSET'
+    LOGINSET = 'login/LOGINSET',
+    SCOREUPDATE = 'login/SCOREUPDATE'
 }
 
 export type loginAction =
@@ -15,12 +17,14 @@ export type loginAction =
     | { type: loginActionTypes.SIGNED_IN, identity: Identity }
     | { type: loginActionTypes.SIGN_OUT }
     | { type: loginActionTypes.LOGINSET, identity: Identity }
+    | { type: loginActionTypes.SCOREUPDATE, newScore: number }
 
 //Login Action Creator Declaration (il s'agit ici de delegate et non pas de function comme pour les answerActions/questionsActions)
 const signedInActionCreator = (identity: Identity) => ({ type: loginActionTypes.SIGNED_IN, identity });
 const networkError = (error: Error) => ({ type: loginActionTypes.NETWORK_ERROR, error });
 const signOutActionCreator = () => ({ type: loginActionTypes.SIGN_OUT });
-const loginSetActionCreator = (identity: Identity) => ({ type: loginActionTypes.LOGINSET, identity });
+export const loginSetActionCreator = (identity: Identity) => ({ type: loginActionTypes.LOGINSET, identity });
+export const scoreUpdateActionCreator = (newScore: number) => ({ type: loginActionTypes.SCOREUPDATE, newScore });
 
 //Thunk SignIn
 export function signIn() {
@@ -48,7 +52,7 @@ export async function setNewIdentity(dispatch: any, accountInfo: AccountInfo) {
         if (userInfo !== null) {
             result.login = userInfo.login;
             result.id = userInfo.id;
-            dispatch(loginSetActionCreator(result));
+            dispatch(finalizeSetLogin(result));
         }
         else {
             dispatch(signedInActionCreator(result));
@@ -85,7 +89,7 @@ export function setLoginAction(newLogin: string, currentIdentity: Identity) {
             } else {
                 newIdentity = await currentIdentity.createLogin(newLogin);
             }
-            dispatch(loginSetActionCreator(newIdentity));
+            await dispatch(finalizeSetLogin(newIdentity));
         }
         catch (error) {
             dispatch(networkError(error));

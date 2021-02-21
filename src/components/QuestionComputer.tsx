@@ -5,7 +5,7 @@ import { connect, useDispatch } from "react-redux";
 
 import { RootState } from "../redux/reducer";
 import {
-  getQuestionActionCreator,
+  getNextQuestionActionCreator,
   QuestionsAction,
 } from "../redux/questionsActions";
 import { ThunkDispatch } from "redux-thunk";
@@ -15,7 +15,7 @@ import { Question } from "../models/questions";
 interface IProps {
   selectedQuestion: Question | null;
   isLogged: boolean;
-  getQuestions: () => Promise<QuestionsAction>;
+  getNextQuestion: () => Promise<QuestionsAction>;
 }
 
 const mapStateToProps = (state: RootState) => ({
@@ -25,14 +25,14 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
   return {
-    getQuestions: () => dispatch(getQuestionActionCreator()),
+    getNextQuestion: () => dispatch(getNextQuestionActionCreator()),
   };
 };
 
 export const UnconnectedQuestionComputer: React.FunctionComponent<IProps> = ({
   selectedQuestion,
   isLogged,
-  getQuestions,
+  getNextQuestion,
 }) => {
   //useDispatch returns a function that we name dispatch
   //We then invoke actions using dispatch by passing our action creators into it
@@ -48,7 +48,7 @@ export const UnconnectedQuestionComputer: React.FunctionComponent<IProps> = ({
         <Button
           variant="contained"
           onClick={() => {
-            dispatch(getQuestions);
+            dispatch(getNextQuestion);
           }}
           disabled={false}
         >

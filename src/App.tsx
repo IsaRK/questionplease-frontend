@@ -5,6 +5,7 @@ import { QuestionComputer } from "./components/QuestionComputer";
 import { AnswerForm } from "./components/AnswerForm";
 import { makeStyles } from "@material-ui/core/styles";
 import { SignInButton } from "./components/SignInButton";
+import Leaderboard from "./components/Leaderboard";
 
 export const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,6 +24,7 @@ export const App: React.FC = () => {
       <SignInButton />
       <QuestionComputer />
       <AnswerForm />
+      <Leaderboard />
     </StyledBox>
   );
 };

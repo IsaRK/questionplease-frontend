@@ -1,11 +1,12 @@
-import { authService } from '../services/authService';
 import { Question } from '../models/questions';
-import { HttpResponse } from '../services/serviceHelper';
+import { getOptions, getOptionsWithBody, HttpResponse } from '../services/serviceHelper';
 
-const questionPleaseApi = 'https://questionplease-api.azurewebsites.net/api/question';
+//const questionPleaseApiUrl = 'http://localhost:7071/api/question/';
+const questionPleaseApiUrl = 'https://questionplease-api.azurewebsites.net/api/question';
 //initial API : https://opentdb.com/api.php?amount=10&category=9&difficulty=easy'
 
-interface ISerializedApiQuestion {
+export interface ISerializedApiQuestion {
+    id: string;
     category: string;
     type: string;
     difficulty: string;
@@ -14,62 +15,113 @@ interface ISerializedApiQuestion {
     incorrect_answers: string[];
 }
 
-function getNextId(questionsArray: Array<Question>): number {
-    if (questionsArray.length === 0) {
-        return 1;
-    }
-    return 1 + Math.max(...questionsArray.map((p) => p.id));
+export interface IAnswerValidationResult {
+    isValid: boolean;
+    points: number;
+    newScore: number;
 }
 
-export async function loadTestDataFromApi(): Promise<Question[]> {
-    let result = new Array<Question>();
-
-    let dataFromApi: HttpResponse<ISerializedApiQuestion[]>;
-    try {
-        dataFromApi = await getQuestionsFromAPI<ISerializedApiQuestion[]>();
-        console.log("response", dataFromApi);
-    } catch (response) {
-        console.log("Error", response);
-        return new Array<Question>();
-    }
-
-    if (dataFromApi.parsedBody === undefined) {
-        console.log("Undefined Parsed Body");
-        return new Array<Question>();
-    }
-
-    dataFromApi.parsedBody.forEach((saq: ISerializedApiQuestion) => {
-        const question = new Question(getNextId(result), saq.question, saq.correct_answer);
-        result.push(question);
-    });
-
-    return result
+export interface IUserQuestionsLog {
+    id: string,
+    idUser: string,
+    idQuestion: string,
+    questionDone: boolean,
+    questionPoint: number
 }
 
-export async function getQuestionsFromAPI<T>(): Promise<HttpResponse<T>> {
-    const headers = new Headers();
-    const token = await authService.getTokenPopup();
+class QuestionService {
 
-    if (!token) {
-        throw new Error("Undefined Token");
+    static extractQuestionResponse(response: HttpResponse<ISerializedApiQuestion>): Question {
+        if (!response.ok) {
+            throw new Error(response.statusText);
+        }
+
+        if (response.parsedBody === null || response.parsedBody === undefined) {
+            throw new Error("Fetched ISerializedApiQuestion is undefined");
+        }
+
+        return new Question(response.parsedBody);
     }
 
-    const bearer = `Bearer ${token.accessToken}`;
-    headers.append("Authorization", bearer);
+    static async loadNextQuestion(): Promise<Question> {
+        try {
+            const options = await getOptions("GET");
 
-    var options = {
-        method: "GET",
-        headers: headers
-    };
-
-    const response: HttpResponse<T> = await fetch(questionPleaseApi, options);
-
-    try {
-        response.parsedBody = await response.json();
-    } catch (ex) { }
-
-    if (!response.ok) {
-        throw new Error(response.statusText);
+            const response: HttpResponse<ISerializedApiQuestion> = await fetch(questionPleaseApiUrl, options);
+            response.parsedBody = await response.json();
+            return QuestionService.extractQuestionResponse(response);
+        }
+        catch (ex) {
+            throw new Error("Error when fetching ISerializedApiQuestion");
+        }
     }
-    return response;
+
+    static async loadNextQuestionWithId(questionid: number): Promise<Question> {
+        try {
+            const options = await getOptions("GET");
+            var completeUrl = questionPleaseApiUrl + "/" + questionid.toString();
+
+            const response: HttpResponse<ISerializedApiQuestion> = await fetch(completeUrl, options);
+            response.parsedBody = await response.json();
+            return QuestionService.extractQuestionResponse(response);
+        }
+        catch (ex) {
+            throw new Error("Error when fetching ISerializedApiQuestion");
+        }
+    }
+
+    static async abandonQuestion(userId: string, questionId: number): Promise<IUserQuestionsLog> {
+        try {
+            var body = {
+                userId: userId,
+                questionId: questionId
+            };
+
+            const options = await getOptionsWithBody("POST", body);
+            const response: HttpResponse<IUserQuestionsLog> = await fetch(questionPleaseApiUrl + "/abandon", options);
+            response.parsedBody = await response.json();
+
+            if (!response.ok) {
+                throw new Error(response.statusText);
+            }
+
+            if (response.parsedBody === null || response.parsedBody === undefined) {
+                throw new Error("Fetched IUserQuestionsLog is undefined");
+            }
+
+            return response.parsedBody;
+        }
+        catch (ex) {
+            throw new Error("Error when fetching IUserQuestionsLog");
+        }
+    }
+
+    static async validateAnswer(userId: string, questionId: number, userAnswer: string): Promise<IAnswerValidationResult> {
+        try {
+            var body = {
+                userId: userId,
+                questionId: questionId,
+                answer: userAnswer
+            };
+
+            const options = await getOptionsWithBody("POST", body);
+            const response: HttpResponse<IAnswerValidationResult> = await fetch(questionPleaseApiUrl + "/validate", options);
+            response.parsedBody = await response.json();
+
+            if (!response.ok) {
+                throw new Error(response.statusText);
+            }
+
+            if (response.parsedBody === null || response.parsedBody === undefined) {
+                throw new Error("Fetched IAnswerValidationResult is undefined");
+            }
+
+            return response.parsedBody;
+        }
+        catch (ex) {
+            throw new Error("Error when fetching IAnswerValidationResult");
+        }
+    }
 }
+
+export default QuestionService;

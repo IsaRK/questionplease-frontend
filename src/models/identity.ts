@@ -5,20 +5,22 @@
 
 import { AccountInfo } from "@azure/msal-browser";
 import UserService, { IUserInfo } from "../services/userService";
+import { UserScore } from "./leaderboard";
 
 export type LoginState = {
     Identity: Identity | null
     LastError: Error | null
     IsLogged: boolean
+    Score: Number
 };
 
 export default class Identity {
     account: AccountInfo | undefined;
     login: string | undefined;
-    id: number | undefined;
+    id: string | undefined;
     userService: UserService;
 
-    constructor(accountInfo: AccountInfo, login: string | undefined, id: number | undefined) {
+    constructor(accountInfo: AccountInfo, login: string | undefined, id: string | undefined) {
         this.account = accountInfo;
         this.userService = new UserService(accountInfo);
         this.login = login;
@@ -50,5 +52,9 @@ export default class Identity {
 
         await this.userService.updateLogin(this.id, newLogin);
         return { ...this, login: newLogin }
+    }
+
+    async getLeaderboard(): Promise<UserScore[]> {
+        return await this.userService.getLeaderboard();
     }
 }

@@ -7,20 +7,30 @@ import { useStyles } from "../App";
 import { RootState } from "../redux/reducer";
 import { useDispatch, useSelector } from "react-redux";
 import { Question } from "../models/questions";
-import { validateAnswerAction } from "../redux/answerActions";
+import { validateAnswerActionCreator } from "../redux/answerActions";
 import { AnswerResult } from "./AnswerResult";
+import { updateLeaderboardActionCreator } from "../redux/leaderboardActions";
+import Identity from "../models/identity";
 
 export const AnswerForm: React.FunctionComponent = () => {
   const dispatch = useDispatch();
   const selectedQuestion: Question | null = useSelector(
     (state: RootState) => state.questionsState.SelectedQuestion
   );
-  const answerResult: Boolean | null = useSelector(
-    (state: RootState) => state.questionsState.AnswerResult
+  const answerResult: string | null = useSelector(
+    (state: RootState) => state.questionsState.UserAnswerResult
+  );
+  const identity: Identity | null = useSelector(
+    (state: RootState) => state.loginState.Identity
   );
 
-  const dispatchValidation = (answer: string) => {
-    dispatch(validateAnswerAction(answer));
+  const dispatchValidation = (
+    identity: Identity | null,
+    questionId: number,
+    userAnswer: string
+  ) => {
+    dispatch(validateAnswerActionCreator(identity?.id, questionId, userAnswer));
+    dispatch(updateLeaderboardActionCreator(identity));
   };
 
   const styleClass = useStyles();
@@ -37,7 +47,9 @@ export const AnswerForm: React.FunctionComponent = () => {
     <Box className={styleClass.root}>
       <Formik
         initialValues={{ answer: "" }}
-        onSubmit={(values) => dispatchValidation(values.answer)}
+        onSubmit={(values) =>
+          dispatchValidation(identity, selectedQuestion.id, values.answer)
+        }
       >
         {({ values, handleChange, handleBlur }) => (
           <Form>

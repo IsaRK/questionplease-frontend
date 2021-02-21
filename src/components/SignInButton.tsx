@@ -7,7 +7,6 @@ import { authService } from "../services/authService";
 import { Box, Button, TextField } from "@material-ui/core";
 import { Form, Formik } from "formik";
 import { useStyles } from "../App";
-import { Label } from "@material-ui/icons";
 
 export const SignInButton: React.FunctionComponent = () => {
   const identity = useSelector((state: RootState) => state.loginState.Identity);

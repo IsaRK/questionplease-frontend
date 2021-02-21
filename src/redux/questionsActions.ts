@@ -1,32 +1,38 @@
 import { ActionCreator, Dispatch } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import { Question } from "../models/questions";
-import { loadTestDataFromApi } from '../services/questionService';
+import questionService from '../services/questionService';
 
-export enum actionTypes {
-  QUESTIONS_GETQUESTIONSFROMAPI = 'questions/QUESTIONS_GETQUESTIONSFROMAPI',
-  QUESTIONS_SELECTRANDOM = 'question/SELECTRANDOM',
-  ANSWER_VALIDATE = 'answer/VALIDATE',
-  ANSWER_NEXTQUESTION = 'answer/NEXTQUESTION',
-  ANSWER_RETRY = 'answer/RETRY',
+export enum questionActionTypes {
+  QUESTIONS_GOTNEXTQUESTION = 'questions/QUESTIONS_GOTEXTQUESTION',
+  QUESTIONS_RETRY = 'questions/RETRY',
+  QUESTIONS_ABANDON = 'questions/ABANDON',
 }
 
 export type QuestionsAction =
-  | { type: actionTypes.QUESTIONS_GETQUESTIONSFROMAPI; questions: Question[] }
-  | { type: actionTypes.QUESTIONS_SELECTRANDOM }
+  | { type: questionActionTypes.QUESTIONS_GOTNEXTQUESTION; nextQuestion: Question }
+  | { type: questionActionTypes.QUESTIONS_RETRY }
+  | { type: questionActionTypes.QUESTIONS_ABANDON }
 
-export function selectRandomQuestionAction(): QuestionsAction {
+export function gotNextQuestionAction(nextQuestion: Question): QuestionsAction {
   return {
-    type: actionTypes.QUESTIONS_SELECTRANDOM
+    type: questionActionTypes.QUESTIONS_GOTNEXTQUESTION,
+    nextQuestion: nextQuestion
   } as const
 }
 
-export function gettingQuestionAction(questions: Question[]): QuestionsAction {
+export function abandonQuestionAction(): QuestionsAction {
   return {
-    type: actionTypes.QUESTIONS_GETQUESTIONSFROMAPI,
-    questions: questions
+    type: questionActionTypes.QUESTIONS_ABANDON,
   } as const
 }
+
+export function retryQuestionAction(): QuestionsAction {
+  return {
+    type: questionActionTypes.QUESTIONS_RETRY,
+  } as const
+}
+
 
 //https://www.carlrippon.com/strongly-typed-react-redux-code-with-typescript/
 /*ThunkAction<R, S, E, A extends Action> type is used. It accepts following type arguments:
@@ -36,19 +42,40 @@ S stays for the app state
 E is the extension attribute type which is not used
 A is type of the action. KnownActions in example above is the union of all possible action types (type KnownActions = Action1 | Action2;)
 */
-export const getQuestionActionCreator: ActionCreator<ThunkAction<
+export const getNextQuestionActionCreator: ActionCreator<ThunkAction<
   // The type of the last action to be dispatched - will always be promise<T> for async actions
   Promise<QuestionsAction>,
   // The type for the data within the last action
-  Question[],
+  Question,
   // The type of the parameter for the nested function
   null,
   // The type of the last action to be dispatched
   QuestionsAction
 >> = () => {
   return async (dispatch: Dispatch) => {
-    const questions = await loadTestDataFromApi();
-    dispatch(gettingQuestionAction(questions));
-    return dispatch(selectRandomQuestionAction());
+    const nextQuestion = await questionService.loadNextQuestion();
+    return dispatch(gotNextQuestionAction(nextQuestion));
   };
 };
+
+export function getNextQuestion(nextQuestionid: number) {
+  return async (dispatch: any) => {
+    try {
+      const nextQuestion = await questionService.loadNextQuestionWithId(nextQuestionid);
+      dispatch(gotNextQuestionAction(nextQuestion));
+    } catch (error) {
+      throw error;
+    }
+  };
+}
+
+export function abandonQuestion(userId: string, currentQuestionId: number) {
+  return async (dispatch: any) => {
+    try {
+      await questionService.abandonQuestion(userId, currentQuestionId);
+      dispatch(abandonQuestionAction());
+    } catch (error) {
+      throw error;
+    }
+  };
+}

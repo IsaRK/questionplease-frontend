@@ -1,9 +1,15 @@
 import { AccountInfo } from "@azure/msal-browser";
+import { UserScore } from "../models/leaderboard";
 import { getOptions, HttpResponse } from "./serviceHelper";
 
 export interface IUserInfo {
-    id: number,
+    id: string,
     login: string
+}
+
+export interface IUserScore {
+    login: string,
+    score: number
 }
 
 class UserService {
@@ -61,7 +67,7 @@ class UserService {
         }
     }
 
-    async updateLogin(id: number, newLogin: string): Promise<void> {
+    async updateLogin(id: string, newLogin: string): Promise<void> {
         try {
             const options = await getOptions("POST");
             var completeUrl = new URL(this.url);
@@ -73,6 +79,27 @@ class UserService {
         }
         catch (ex) {
             throw new Error("Error when fetching UserInfo");
+        }
+    }
+
+    async getLeaderboard(): Promise<UserScore[]> {
+        try {
+            const options = await getOptions("GET");
+            const response: HttpResponse<IUserScore[]> = await fetch(this.url + "top", options);
+
+            response.parsedBody = await response.json();
+            if (!response.ok) {
+                throw new Error(response.statusText);
+            }
+
+            if (!response.parsedBody) {
+                throw new Error("Fetched UserScore array is undefined");
+            }
+
+            return response.parsedBody.map(x => new UserScore(x));
+        }
+        catch (ex) {
+            throw new Error("Error when fetching UserScore array");
         }
     }
 }
