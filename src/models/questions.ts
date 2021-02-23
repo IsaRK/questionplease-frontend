@@ -11,14 +11,10 @@ export class Question {
   constructor(apiQuestion: ISerializedApiQuestion) {
     this.id = Number(apiQuestion.id);
     this.interrogation = apiQuestion.question;
-    this.answer = apiQuestion.correct_answer;
+    this.answers = apiQuestion.answers;
   }
 
   id: number;
   interrogation: string;
-  answer: string;
-
-  toString(): string {
-    return "[" + this.interrogation + " : " + this.answer + "]";
-  }
+  answers: string[];
 }

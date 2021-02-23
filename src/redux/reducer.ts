@@ -4,7 +4,6 @@ import { LoginState } from '../models/identity';
 import { loginAction, loginActionTypes } from './loginActions';
 import { QuestionsState } from '../models/questions';
 import { questionActionTypes, QuestionsAction } from './questionsActions';
-import Leaderboard from '../components/Leaderboard';
 import { LeaderboardState } from '../models/leaderboard';
 import { leaderboardAction, leaderboardActionTypes } from './leaderboardActions';
 
@@ -27,6 +26,8 @@ export function questionsReducer(
       return {
         ...state,
         SelectedQuestion: action.nextQuestion,
+        IsValidAnswer: false,
+        UserAnswerResult: null
       };
     case answerActionTypes.ANSWER_RIGHTANSWER:
       return {
@@ -57,20 +58,22 @@ export function questionsReducer(
   }
 }
 
-const initialLoginState: LoginState = { Identity: null, LastError: null, IsLogged: false, Score: 0 };
+const initialLoginState: LoginState = { Identity: null, LastError: null, IsLogged: false, Score: 0, PlayWithoutLogin: false };
 
 export function loginReducer(state = initialLoginState, action: loginAction): LoginState {
   switch (action.type) {
     case loginActionTypes.NETWORK_ERROR:
       return { ...state, LastError: action.error };
     case loginActionTypes.SIGNED_IN:
-      return { ...state, Identity: action.identity };
+      return { ...state, Identity: action.identity, Score: action.identity.score };
     case loginActionTypes.SIGN_OUT:
       return { ...state, Identity: null };
     case loginActionTypes.LOGINSET:
-      return { ...state, Identity: action.identity, IsLogged: true };
+      return { ...state, Identity: action.identity, Score: action.identity.score, IsLogged: true, PlayWithoutLogin: false };
     case loginActionTypes.SCOREUPDATE:
       return { ...state, Score: action.newScore };
+    case loginActionTypes.PLAYWITHOUTLOGIN:
+      return { ...state, PlayWithoutLogin: true };
     default:
       return state;
   }

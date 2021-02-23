@@ -1,10 +1,10 @@
-import { AccountInfo } from "@azure/msal-browser";
 import { UserScore } from "../models/leaderboard";
-import { getOptions, HttpResponse } from "./serviceHelper";
+import { getOptions, getUserBaseUrl, HttpResponse } from "./serviceHelper";
 
 export interface IUserInfo {
     id: string,
-    login: string
+    login: string,
+    score: number
 }
 
 export interface IUserScore {
@@ -14,13 +14,11 @@ export interface IUserScore {
 
 class UserService {
 
-    constructor(accountInfo: AccountInfo) {
-        this.homeAccountId = accountInfo.homeAccountId;
+    constructor(homeAccountId: string) {
+        this.homeAccountId = homeAccountId;
     }
 
     homeAccountId: string;
-
-    url = 'https://questionplease-api.azurewebsites.net/api/user/';
 
     extractResponse(response: HttpResponse<IUserInfo | null>): IUserInfo | null {
         if (!response.ok) {
@@ -37,7 +35,7 @@ class UserService {
     async getLogin(): Promise<IUserInfo | null> {
         try {
             const options = await getOptions("GET");
-            const response: HttpResponse<IUserInfo> = await fetch(this.url, options);
+            const response: HttpResponse<IUserInfo> = await fetch(getUserBaseUrl(), options);
 
             if (response.status === 204)//No content
             {
@@ -56,7 +54,7 @@ class UserService {
         try {
             const options = await getOptions("PUT");
             //var queryParams = new URLSearchParams({ login: newLogin }); >> await fetch(this.url + queryParams, options);
-            var completeUrl = new URL(newLogin, this.url);
+            var completeUrl = new URL(newLogin, getUserBaseUrl());
 
             const response: HttpResponse<IUserInfo> = await fetch(completeUrl.toString(), options);
             response.parsedBody = await response.json();
@@ -70,7 +68,7 @@ class UserService {
     async updateLogin(id: string, newLogin: string): Promise<void> {
         try {
             const options = await getOptions("POST");
-            var completeUrl = new URL(this.url);
+            var completeUrl = new URL(getUserBaseUrl());
             completeUrl.pathname = id + "/" + newLogin;
 
             const response: HttpResponse<IUserInfo> = await fetch(completeUrl.toString(), options);
@@ -85,7 +83,7 @@ class UserService {
     async getLeaderboard(): Promise<UserScore[]> {
         try {
             const options = await getOptions("GET");
-            const response: HttpResponse<IUserScore[]> = await fetch(this.url + "top", options);
+            const response: HttpResponse<IUserScore[]> = await fetch(getUserBaseUrl() + "top", options);
 
             response.parsedBody = await response.json();
             if (!response.ok) {

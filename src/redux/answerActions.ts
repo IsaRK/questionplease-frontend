@@ -1,6 +1,8 @@
 import { ActionCreator, Dispatch } from "redux";
 import { ThunkAction } from "redux-thunk";
+import Identity from "../models/identity";
 import questionService, { IAnswerValidationResult } from "../services/questionService";
+import { getLearderbord, leaderboardSetActionCreator, updateLeaderboard } from "./leaderboardActions";
 import { scoreUpdateActionCreator } from "./loginActions";
 
 export enum answerActionTypes {
@@ -32,16 +34,27 @@ export const validateAnswerActionCreator: ActionCreator<ThunkAction<
     any, // The type for the data within the last action
     null, // The type of the parameter for the nested function
     AnswerAction // The type of the last action to be dispatched
->> = (userId: string | undefined, questionId: number, userAnswer: string) => {
+>> = (identity: Identity | null, questionId: number, userAnswer: string, oldScore: number, minScore: number) => {
     return async (dispatch: Dispatch) => {
-        if (userId === undefined) {
-            throw new Error("Cannot validate answer with undefined userId");
-        }
-
-        const answerValidationResult: IAnswerValidationResult = await questionService.validateAnswer(userId, questionId, userAnswer);
+        const answerValidationResult: IAnswerValidationResult = await questionService.validateAnswer(identity?.id, questionId, userAnswer);
 
         if (answerValidationResult.isValid) {
-            dispatch(scoreUpdateActionCreator(answerValidationResult.newScore));
+
+            let newScore;
+            if (identity === null) {
+                newScore = oldScore + answerValidationResult.points;
+            }
+            else {
+                newScore = answerValidationResult.newScore;
+            }
+
+            dispatch(scoreUpdateActionCreator(newScore));
+
+            if (newScore >= minScore && identity !== null) {
+                const { topUsers, minScore } = await getLearderbord(identity);
+                dispatch(leaderboardSetActionCreator(topUsers, minScore));
+            }
+
             return dispatch(gotRightAnswerAction(userAnswer, answerValidationResult.points));
         }
         else {

@@ -7,6 +7,7 @@ import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 import {
   abandonQuestion,
   getNextQuestion,
+  getNextQuestionActionCreator,
   retryQuestionAction,
 } from "../redux/questionsActions";
 
@@ -26,13 +27,27 @@ export const AnswerResult: React.FunctionComponent = () => {
 
   const dispatch = useDispatch();
 
+  if (currentQuestionId === undefined) {
+    throw new Error("Unable to load result with currentQuestionId undefined");
+  }
+
   const dispatchRetry = () => {
     dispatch(retryQuestionAction());
   };
 
-  if (currentQuestionId === undefined) {
-    throw new Error("Unable to load result with currentQuestionId undefined");
-  }
+  const dispatchAbandon = () => {
+    dispatch(abandonQuestion(userId, currentQuestionId));
+    dispatchNextQuestion();
+  };
+
+  const dispatchNextQuestion = () => {
+    if (userId === undefined) {
+      //PlayWithoutLogin
+      dispatch(getNextQuestionActionCreator());
+    } else {
+      dispatch(getNextQuestion(currentQuestionId + 1));
+    }
+  };
 
   if (isValidAnswer) {
     return (
@@ -43,17 +58,13 @@ export const AnswerResult: React.FunctionComponent = () => {
         </div>
         <Button
           variant="contained"
-          onClick={() => dispatch(getNextQuestion(currentQuestionId + 1))}
+          onClick={() => dispatchNextQuestion()}
           disabled={false}
         >
           Next Question Please
         </Button>
       </Box>
     );
-  }
-
-  if (userId === undefined) {
-    throw new Error("Unable to load result with userId undefined");
   }
 
   return (
@@ -68,7 +79,7 @@ export const AnswerResult: React.FunctionComponent = () => {
       </Button>
       <Button
         variant="contained"
-        onClick={() => dispatch(abandonQuestion(userId, currentQuestionId))}
+        onClick={() => dispatchAbandon()}
         disabled={false}
       >
         Next Question Please

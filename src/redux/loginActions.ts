@@ -9,7 +9,8 @@ export enum loginActionTypes {
     SIGNED_IN = 'login/SIGNEDIN',
     SIGN_OUT = 'login/SIGNOUT',
     LOGINSET = 'login/LOGINSET',
-    SCOREUPDATE = 'login/SCOREUPDATE'
+    SCOREUPDATE = 'login/SCOREUPDATE',
+    PLAYWITHOUTLOGIN = 'login/PLAYWITHOUTLOGIN'
 }
 
 export type loginAction =
@@ -18,6 +19,7 @@ export type loginAction =
     | { type: loginActionTypes.SIGN_OUT }
     | { type: loginActionTypes.LOGINSET, identity: Identity }
     | { type: loginActionTypes.SCOREUPDATE, newScore: number }
+    | { type: loginActionTypes.PLAYWITHOUTLOGIN }
 
 //Login Action Creator Declaration (il s'agit ici de delegate et non pas de function comme pour les answerActions/questionsActions)
 const signedInActionCreator = (identity: Identity) => ({ type: loginActionTypes.SIGNED_IN, identity });
@@ -25,6 +27,7 @@ const networkError = (error: Error) => ({ type: loginActionTypes.NETWORK_ERROR, 
 const signOutActionCreator = () => ({ type: loginActionTypes.SIGN_OUT });
 export const loginSetActionCreator = (identity: Identity) => ({ type: loginActionTypes.LOGINSET, identity });
 export const scoreUpdateActionCreator = (newScore: number) => ({ type: loginActionTypes.SCOREUPDATE, newScore });
+export const setPlayWithoutLoginActionCreator = () => ({ type: loginActionTypes.PLAYWITHOUTLOGIN });
 
 //Thunk SignIn
 export function signIn() {
@@ -46,12 +49,13 @@ export function signIn() {
 }
 
 export async function setNewIdentity(dispatch: any, accountInfo: AccountInfo) {
-    const result = new Identity(accountInfo, undefined, undefined);
+    const result = new Identity(accountInfo, undefined, undefined, 0);
     try {
         const userInfo = await result.getUserInfo();
         if (userInfo !== null) {
             result.login = userInfo.login;
             result.id = userInfo.id;
+            result.score = userInfo.score;
             dispatch(finalizeSetLogin(result));
         }
         else {

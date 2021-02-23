@@ -1,19 +1,17 @@
-import React from "react";
-import TextField from "@material-ui/core/TextField";
-import { Form, Formik } from "formik";
-import Button from "@material-ui/core/Button";
+import React, { useState } from "react";
 import { Box } from "@material-ui/core";
-import { useStyles } from "../App";
 import { RootState } from "../redux/reducer";
 import { useDispatch, useSelector } from "react-redux";
 import { Question } from "../models/questions";
 import { validateAnswerActionCreator } from "../redux/answerActions";
 import { AnswerResult } from "./AnswerResult";
-import { updateLeaderboardActionCreator } from "../redux/leaderboardActions";
 import Identity from "../models/identity";
 
 export const AnswerForm: React.FunctionComponent = () => {
+  const [choice, setChoice] = useState("");
+
   const dispatch = useDispatch();
+
   const selectedQuestion: Question | null = useSelector(
     (state: RootState) => state.questionsState.SelectedQuestion
   );
@@ -23,17 +21,28 @@ export const AnswerForm: React.FunctionComponent = () => {
   const identity: Identity | null = useSelector(
     (state: RootState) => state.loginState.Identity
   );
+  const currentScore: Number = useSelector(
+    (state: RootState) => state.loginState.Score
+  );
+  const minScore: Number = useSelector(
+    (state: RootState) => state.leaderboardState.MinScore
+  );
 
-  const dispatchValidation = (
-    identity: Identity | null,
-    questionId: number,
-    userAnswer: string
-  ) => {
-    dispatch(validateAnswerActionCreator(identity?.id, questionId, userAnswer));
-    dispatch(updateLeaderboardActionCreator(identity));
+  const dispatchValidation = (event: any) => {
+    event.preventDefault(); //to prevent POST redirection after submit
+
+    dispatch(
+      validateAnswerActionCreator(
+        identity,
+        selectedQuestion?.id,
+        choice,
+        currentScore,
+        minScore
+      )
+    );
+
+    setChoice("");
   };
-
-  const styleClass = useStyles();
 
   if (selectedQuestion === null) {
     return <div />;
@@ -43,28 +52,27 @@ export const AnswerForm: React.FunctionComponent = () => {
     return <AnswerResult />;
   }
 
+  const listAnswers = selectedQuestion.answers.map((oneAnswer, index) => (
+    <div className="radio" key={index}>
+      <label>
+        <input
+          type="radio"
+          key={index}
+          value={oneAnswer}
+          checked={choice === oneAnswer}
+          onChange={(event) => setChoice(event.target.value)}
+        />
+        {oneAnswer}
+      </label>
+    </div>
+  ));
+
   return (
-    <Box className={styleClass.root}>
-      <Formik
-        initialValues={{ answer: "" }}
-        onSubmit={(values) =>
-          dispatchValidation(identity, selectedQuestion.id, values.answer)
-        }
-      >
-        {({ values, handleChange, handleBlur }) => (
-          <Form>
-            <div>
-              <TextField
-                name="answer"
-                value={values.answer}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              />
-            </div>
-            <Button type="submit">Submit</Button>
-          </Form>
-        )}
-      </Formik>
+    <Box>
+      <form onSubmit={(e) => dispatchValidation(e)}>
+        {listAnswers}
+        <button type="submit">Submit</button>
+      </form>
     </Box>
   );
 };

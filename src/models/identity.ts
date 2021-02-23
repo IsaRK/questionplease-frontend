@@ -12,19 +12,22 @@ export type LoginState = {
     LastError: Error | null
     IsLogged: boolean
     Score: Number
+    PlayWithoutLogin: boolean
 };
 
 export default class Identity {
     account: AccountInfo | undefined;
     login: string | undefined;
     id: string | undefined;
+    score: number;
     userService: UserService;
 
-    constructor(accountInfo: AccountInfo, login: string | undefined, id: string | undefined) {
+    constructor(accountInfo: AccountInfo, login: string | undefined, id: string | undefined, score: number) {
         this.account = accountInfo;
-        this.userService = new UserService(accountInfo);
+        this.userService = new UserService(accountInfo.homeAccountId);
         this.login = login;
         this.id = id;
+        this.score = score;
     }
 
     async getUserInfo(): Promise<IUserInfo | null> {
@@ -42,7 +45,7 @@ export default class Identity {
             throw new Error("UserInfo should not be null when creating a login");
         }
 
-        return { ...this, login: userInfo.login, id: userInfo.id }
+        return { ...this, login: userInfo.login, id: userInfo.id, score: userInfo.score }
     }
 
     async updateLogin(newLogin: string) {

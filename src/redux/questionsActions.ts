@@ -69,10 +69,13 @@ export function getNextQuestion(nextQuestionid: number) {
   };
 }
 
-export function abandonQuestion(userId: string, currentQuestionId: number) {
+export function abandonQuestion(userId: string | undefined, currentQuestionId: number) {
   return async (dispatch: any) => {
     try {
-      await questionService.abandonQuestion(userId, currentQuestionId);
+      if (userId !== undefined) { //Not PlayWithoutLogin
+        await questionService.abandonQuestion(userId, currentQuestionId);
+      }
+
       dispatch(abandonQuestionAction());
     } catch (error) {
       throw error;

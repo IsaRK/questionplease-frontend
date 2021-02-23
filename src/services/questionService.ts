@@ -1,18 +1,10 @@
 import { Question } from '../models/questions';
-import { getOptions, getOptionsWithBody, HttpResponse } from '../services/serviceHelper';
-
-//const questionPleaseApiUrl = 'http://localhost:7071/api/question/';
-const questionPleaseApiUrl = 'https://questionplease-api.azurewebsites.net/api/question';
-//initial API : https://opentdb.com/api.php?amount=10&category=9&difficulty=easy'
+import { getOptions, getOptionsWithBody, getQuestionBaseUrl, HttpResponse } from '../services/serviceHelper';
 
 export interface ISerializedApiQuestion {
     id: string;
-    category: string;
-    type: string;
-    difficulty: string;
     question: string;
-    correct_answer: string;
-    incorrect_answers: string[];
+    answers: string[];
 }
 
 export interface IAnswerValidationResult {
@@ -47,7 +39,7 @@ class QuestionService {
         try {
             const options = await getOptions("GET");
 
-            const response: HttpResponse<ISerializedApiQuestion> = await fetch(questionPleaseApiUrl, options);
+            const response: HttpResponse<ISerializedApiQuestion> = await fetch(getQuestionBaseUrl(), options);
             response.parsedBody = await response.json();
             return QuestionService.extractQuestionResponse(response);
         }
@@ -59,7 +51,7 @@ class QuestionService {
     static async loadNextQuestionWithId(questionid: number): Promise<Question> {
         try {
             const options = await getOptions("GET");
-            var completeUrl = questionPleaseApiUrl + "/" + questionid.toString();
+            var completeUrl = getQuestionBaseUrl() + "/" + questionid.toString();
 
             const response: HttpResponse<ISerializedApiQuestion> = await fetch(completeUrl, options);
             response.parsedBody = await response.json();
@@ -78,7 +70,7 @@ class QuestionService {
             };
 
             const options = await getOptionsWithBody("POST", body);
-            const response: HttpResponse<IUserQuestionsLog> = await fetch(questionPleaseApiUrl + "/abandon", options);
+            const response: HttpResponse<IUserQuestionsLog> = await fetch(getQuestionBaseUrl() + "/abandon", options);
             response.parsedBody = await response.json();
 
             if (!response.ok) {
@@ -96,16 +88,27 @@ class QuestionService {
         }
     }
 
-    static async validateAnswer(userId: string, questionId: number, userAnswer: string): Promise<IAnswerValidationResult> {
+    static async validateAnswer(userId: string | undefined, questionId: number, userAnswer: string): Promise<IAnswerValidationResult> {
         try {
-            var body = {
-                userId: userId,
-                questionId: questionId,
-                answer: userAnswer
-            };
+
+            let body;
+
+            if (userId === undefined) { //PlayWithoutLogin
+                body = {
+                    questionId: questionId,
+                    answer: userAnswer
+                }
+            } else {
+                body = {
+                    userId: userId,
+                    questionId: questionId,
+                    answer: userAnswer
+                };
+            }
 
             const options = await getOptionsWithBody("POST", body);
-            const response: HttpResponse<IAnswerValidationResult> = await fetch(questionPleaseApiUrl + "/validate", options);
+            var url = getQuestionBaseUrl() + "/validate";
+            const response: HttpResponse<IAnswerValidationResult> = await fetch(url, options);
             response.parsedBody = await response.json();
 
             if (!response.ok) {

@@ -24,6 +24,10 @@ class AuthService {
 
     currentAccount: AccountInfo | null;
 
+    hasUserSignedIn(): boolean {
+        return this.currentAccount !== null;
+    }
+
     setCurrentAccount(): AccountInfo | undefined {
         // See here for more info on account retrieval:
         // https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-common/docs/Accounts.md
