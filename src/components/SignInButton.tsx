@@ -11,7 +11,8 @@ import {
 import { authService } from "../services/authService";
 import { Box, Button, TextField } from "@material-ui/core";
 import { Form, Formik } from "formik";
-import { useStyles } from "../App";
+//import { useStyles } from "../App";
+import { Link } from "react-router-dom";
 import { updateLeaderboardWithoutLogin } from "../redux/leaderboardActions";
 
 export const SignInButton: React.FunctionComponent = () => {
@@ -22,7 +23,7 @@ export const SignInButton: React.FunctionComponent = () => {
   );
 
   const dispatch = useDispatch();
-  const styleClass = useStyles();
+  //const styleClass = useStyles();
 
   const onClickSignInHandler = () => {
     dispatch(identity ? signOut() : signIn());
@@ -44,7 +45,8 @@ export const SignInButton: React.FunctionComponent = () => {
 
   if (identity != null && identity.login === undefined) {
     return (
-      <Box className={styleClass.root}>
+      //<Box className={styleClass.root}>
+      <Box>
         <Formik
           initialValues={{ login: "" }}
           onSubmit={(values) => addLogin(values.login)}
@@ -73,16 +75,20 @@ export const SignInButton: React.FunctionComponent = () => {
         {isLogged ? <label>{"Welcome " + identity?.login}</label> : <div />}
       </div>
 
-      <button type="button" onClick={onClickSignInHandler}>
+      <Button component={Link} to="/play" onClick={onClickSignInHandler}>
         <FontAwesomeIcon icon={authService.icon} />
         <span>{buttonText}</span>
         <span>{longText}</span>
-      </button>
+      </Button>
 
       {!playWithoutLogin ? (
-        <button type="button" onClick={onClickPlayWithoutLoginHandler}>
+        <Button
+          component={Link}
+          to="/play"
+          onClick={onClickPlayWithoutLoginHandler}
+        >
           <span>"Play without Login"</span>
-        </button>
+        </Button>
       ) : (
         <div />
       )}
