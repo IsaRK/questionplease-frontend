@@ -1,14 +1,12 @@
-import Box from "@material-ui/core/Box";
 import "./App.css";
-import { QuestionComputer } from "./components/QuestionComputer";
-import { AnswerForm } from "./components/AnswerForm";
 import { makeStyles } from "@material-ui/core/styles";
-import { SignInButton } from "./components/SignInButton";
-import Leaderboard from "./components/Leaderboard";
 import React from "react";
 import { Home } from "./components/Home";
-import { Route, Switch } from "react-router-dom";
+import { Redirect, Route, Switch } from "react-router-dom";
 import { Play } from "./components/Play";
+import { useSelector } from "react-redux";
+import { RootState } from "./redux/reducer";
+import SetLogin from "./components/SetLogin";
 
 /*
 export const useStyles = makeStyles((theme) => ({
@@ -24,6 +22,11 @@ export const useStyles = makeStyles((theme) => ({
 */
 
 export const App: React.FC = () => {
+  const identity = useSelector((state: RootState) => state.loginState.Identity);
+
+  const missingLogin = identity != null && identity.login === undefined;
+  const loginNotMissing = identity != null && identity.login !== undefined;
+
   return (
     /*
     <StyledBox>
@@ -36,10 +39,19 @@ export const App: React.FC = () => {
     <main>
       <Switch>
         <Route path="/" exact>
-          <Home />
+          {missingLogin ? (
+            <Redirect to="/login" />
+          ) : loginNotMissing ? (
+            <Redirect to="/play" />
+          ) : (
+            <Home />
+          )}
         </Route>
         <Route path="/play">
           <Play />
+        </Route>
+        <Route path="/login">
+          <SetLogin />
         </Route>
       </Switch>
     </main>

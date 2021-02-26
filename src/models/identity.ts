@@ -38,14 +38,20 @@ export default class Identity {
         return this.userService.getLogin();
     }
 
-    async createLogin(newLogin: string) {
+    async createLogin(newLogin: string): Promise<Identity> {
         const userInfo = await this.userService.createLogin(newLogin);
 
         if (userInfo === null) {
             throw new Error("UserInfo should not be null when creating a login");
         }
 
-        return { ...this, login: userInfo.login, id: userInfo.id, score: userInfo.score }
+        //Several ways to clone an object in TypeScript
+        //https://stackoverflow.com/questions/28150967/typescript-cloning-object
+        const newIdentity = Object.create(this);
+        newIdentity.login = userInfo.login;
+        newIdentity.id = userInfo.id;
+        newIdentity.score = userInfo.score;
+        return newIdentity;
     }
 
     async updateLogin(newLogin: string) {
@@ -54,10 +60,13 @@ export default class Identity {
         }
 
         await this.userService.updateLogin(this.id, newLogin);
-        return { ...this, login: newLogin }
+        const updatedIdentity = Object.create(this);
+        updatedIdentity.login = newLogin;
+
+        return updatedIdentity;
     }
 
     async getLeaderboard(): Promise<UserScore[]> {
-        return await this.userService.getLeaderboard();
+        return this.userService.getLeaderboard();
     }
 }

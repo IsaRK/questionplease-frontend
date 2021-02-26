@@ -2,7 +2,7 @@ import { ActionCreator, Dispatch } from "redux";
 import { ThunkAction } from "redux-thunk";
 import Identity from "../models/identity";
 import questionService, { IAnswerValidationResult } from "../services/questionService";
-import { getLearderbord, leaderboardSetActionCreator, updateLeaderboard } from "./leaderboardActions";
+import { getLearderbordFromIdentity, leaderboardSetActionCreator } from "./leaderboardActions";
 import { scoreUpdateActionCreator } from "./loginActions";
 
 export enum answerActionTypes {
@@ -51,7 +51,7 @@ export const validateAnswerActionCreator: ActionCreator<ThunkAction<
             dispatch(scoreUpdateActionCreator(newScore));
 
             if (newScore >= minScore && identity !== null) {
-                const { topUsers, minScore } = await getLearderbord(identity);
+                const { topUsers, minScore } = await getLearderbordFromIdentity(identity);
                 dispatch(leaderboardSetActionCreator(topUsers, minScore));
             }
 

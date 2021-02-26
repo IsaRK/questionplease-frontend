@@ -41,10 +41,6 @@ export const UnconnectedQuestionComputer: React.FunctionComponent<IProps> = ({
   //We then invoke actions using dispatch by passing our action creators into it
   const dispatch = useDispatch();
 
-  if (!isLogged && !playWithoutLogin) {
-    return <div />;
-  }
-
   if (selectedQuestion == null) {
     return (
       <Box display="flex" justifyContent="center">

@@ -69,7 +69,7 @@ export async function setNewIdentity(dispatch: any, accountInfo: AccountInfo) {
 
 //Thunk SignOut
 export function signOut() {
-    return async (dispatch: (arg0: { type: loginActionTypes }) => void) => {
+    return async (dispatch: any) => {
         try {
             await authService.signOut();
             dispatch(signOutActionCreator());
@@ -93,7 +93,8 @@ export function setLoginAction(newLogin: string, currentIdentity: Identity) {
             } else {
                 newIdentity = await currentIdentity.createLogin(newLogin);
             }
-            await dispatch(finalizeSetLogin(newIdentity));
+            dispatch(finalizeSetLogin(newIdentity));
+
         }
         catch (error) {
             dispatch(networkError(error));
