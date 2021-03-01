@@ -43,25 +43,19 @@ export const UnconnectedQuestionComputer: React.FunctionComponent<IProps> = ({
 
   if (selectedQuestion == null) {
     return (
-      <Box display="flex" justifyContent="center">
-        <Button
-          variant="contained"
-          onClick={() => {
-            dispatch(getNextQuestion);
-          }}
-          disabled={false}
-        >
-          Question Please
-        </Button>
-      </Box>
+      <Button
+        variant="contained"
+        onClick={() => {
+          dispatch(getNextQuestion);
+        }}
+        disabled={false}
+      >
+        Question Please
+      </Button>
     );
   }
 
-  return (
-    <Box display="flex" justifyContent="center">
-      <Box>{selectedQuestion.interrogation}</Box>
-    </Box>
-  );
+  return <div />;
 };
 
 export const QuestionComputer = connect(

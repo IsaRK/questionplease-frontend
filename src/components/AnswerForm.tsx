@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { Box } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  Grid,
+  Radio,
+  RadioGroup,
+} from "@material-ui/core";
 import { RootState } from "../redux/reducer";
 import { useDispatch, useSelector } from "react-redux";
 import { Question } from "../models/questions";
@@ -53,26 +62,34 @@ export const AnswerForm: React.FunctionComponent = () => {
   }
 
   const listAnswers = selectedQuestion.answers.map((oneAnswer, index) => (
-    <div className="radio" key={index}>
-      <label>
-        <input
-          type="radio"
-          key={index}
-          value={oneAnswer}
-          checked={choice === oneAnswer}
-          onChange={(event) => setChoice(event.target.value)}
-        />
-        {oneAnswer}
-      </label>
-    </div>
+    <FormControlLabel value={oneAnswer} control={<Radio />} label={oneAnswer} />
   ));
 
   return (
-    <Box>
-      <form onSubmit={(e) => dispatchValidation(e)}>
-        {listAnswers}
-        <button type="submit">Submit</button>
-      </form>
-    </Box>
+    <form onSubmit={(e) => dispatchValidation(e)}>
+      <FormControl component="fieldset">
+        <Grid container direction="column" spacing={3}>
+          <Grid item>
+            <FormLabel component="legend">
+              {selectedQuestion.interrogation}
+            </FormLabel>
+          </Grid>
+          <Grid item>
+            <RadioGroup
+              aria-label="quiz"
+              name="quiz"
+              onChange={(event) => setChoice(event.target.value)}
+            >
+              {listAnswers}
+            </RadioGroup>
+          </Grid>
+          <Grid item>
+            <Button type="submit" variant="outlined">
+              Submit Answer
+            </Button>
+          </Grid>
+        </Grid>
+      </FormControl>
+    </form>
   );
 };

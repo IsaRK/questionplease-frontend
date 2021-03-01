@@ -7,6 +7,7 @@ import { Play } from "./components/Play";
 import { useSelector } from "react-redux";
 import { RootState } from "./redux/reducer";
 import SetLogin from "./components/SetLogin";
+import About from "./components/About";
 
 /*
 export const useStyles = makeStyles((theme) => ({
@@ -28,14 +29,6 @@ export const App: React.FC = () => {
   const loginNotMissing = identity != null && identity.login !== undefined;
 
   return (
-    /*
-    <StyledBox>
-      <SignInButton />
-      <QuestionComputer />
-      <AnswerForm />
-      <Leaderboard />
-    </StyledBox>
-    */
     <main>
       <Switch>
         <Route path="/" exact>
@@ -52,6 +45,9 @@ export const App: React.FC = () => {
         </Route>
         <Route path="/login">
           <SetLogin />
+        </Route>
+        <Route path="/about">
+          <About />
         </Route>
       </Switch>
     </main>

@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/reducer";
 import React from "react";
-import { Box, Button } from "@material-ui/core";
+import { Box, Button, ButtonGroup, Grid, Typography } from "@material-ui/core";
 import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 import {
@@ -51,39 +51,47 @@ export const AnswerResult: React.FunctionComponent = () => {
 
   if (isValidAnswer) {
     return (
-      <Box display="flex" justifyContent="center">
-        <CheckCircleOutlineIcon />
-        <div>
-          <label>{"You earned " + points + " points with this question"}</label>
-        </div>
-        <Button
-          variant="contained"
-          onClick={() => dispatchNextQuestion()}
-          disabled={false}
-        >
-          Next Question Please
-        </Button>
-      </Box>
+      <Grid container direction="column" alignItems="center" spacing={3}>
+        <Grid item>
+          <CheckCircleOutlineIcon fontSize="large" />
+        </Grid>
+        <Grid item>
+          <Typography variant="h6">
+            {"You earned " + points + "point"}
+          </Typography>
+        </Grid>
+        <Grid item>
+          <Button variant="contained" onClick={() => dispatchNextQuestion()}>
+            Next Question Please
+          </Button>
+        </Grid>
+      </Grid>
     );
   }
 
   return (
-    <Box display="flex" justifyContent="center">
-      <HighlightOffIcon />
-      <Button
-        variant="contained"
-        onClick={() => dispatchRetry()}
-        disabled={false}
-      >
-        Retry
-      </Button>
-      <Button
-        variant="contained"
-        onClick={() => dispatchAbandon()}
-        disabled={false}
-      >
-        Next Question Please
-      </Button>
-    </Box>
+    <Grid container direction="column" alignItems="center" spacing={3}>
+      <Grid item>
+        <HighlightOffIcon fontSize="large" />
+      </Grid>
+      <Grid item>
+        <ButtonGroup variant="text" aria-label="text primary button group">
+          <Button
+            variant="contained"
+            onClick={() => dispatchRetry()}
+            disabled={false}
+          >
+            Retry
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => dispatchAbandon()}
+            disabled={false}
+          >
+            Next Question Please
+          </Button>
+        </ButtonGroup>
+      </Grid>
+    </Grid>
   );
 };
