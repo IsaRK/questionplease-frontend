@@ -1,4 +1,5 @@
-import { createMuiTheme, makeStyles, withStyles } from "@material-ui/core";
+import { css } from "@emotion/react";
+import { createMuiTheme, makeStyles } from "@material-ui/core";
 
 export const useStyles = makeStyles({
   clickeable: {
@@ -19,7 +20,7 @@ export const useStyles = makeStyles({
   leaderboard: {
     border: "solid",
     padding: "15px",
-    borderWidth: "4px",
+    borderWidth: "2px",
     borderRadius: 0,
     borderColor: "black",
     width: "max-content",
@@ -57,3 +58,9 @@ export const theme = createMuiTheme({
     },
   },
 });
+
+export const spinnerStyle = css`
+  display: block;
+  margin: 0 auto;
+  border-color: black;
+`;

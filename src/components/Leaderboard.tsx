@@ -11,8 +11,10 @@ import {
 } from "@material-ui/core";
 import React from "react";
 import { useSelector } from "react-redux";
+import { PulseLoader } from "react-spinners";
 import { RootState } from "../redux/reducer";
-import { useStyles } from "./styles";
+import Spinner from "./Spinner";
+import { spinnerStyle, useStyles } from "./styles";
 
 export const Leaderboard: React.FunctionComponent = () => {
   const currentUserScore = useSelector(
@@ -27,9 +29,7 @@ export const Leaderboard: React.FunctionComponent = () => {
 
   const classes = useStyles();
 
-  if (topUsers.length === 0) {
-    return <div />;
-  }
+  const loadingTopScores = topUsers.length === 0;
 
   const scoreLabel = playWithoutLogin ? "current streak" : "total score";
 
@@ -56,26 +56,35 @@ export const Leaderboard: React.FunctionComponent = () => {
         </Grid>
         <Grid item>
           <TableContainer className={classes.leaderboard}>
-            <Table size="small" aria-label="a dense table">
-              <TableHead>
-                <TableRow>
-                  <TableCell width="20px">Rank</TableCell>
-                  <TableCell>Login</TableCell>
-                  <TableCell>Score</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {topUsers.map((userScore, index) => (
-                  <TableRow key={index}>
-                    <TableCell component="th" scope="row">
-                      {userScore.rank}
-                    </TableCell>
-                    <TableCell>{userScore.login}</TableCell>
-                    <TableCell>{userScore.score}</TableCell>
+            {loadingTopScores ? (
+              <Grid item>
+                <Spinner
+                  isLoading={loadingTopScores}
+                  label="Loading Top Scores"
+                />
+              </Grid>
+            ) : (
+              <Table size="small" aria-label="a dense table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell width="20px">Rank</TableCell>
+                    <TableCell>Login</TableCell>
+                    <TableCell>Score</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHead>
+                <TableBody>
+                  {topUsers.map((userScore, index) => (
+                    <TableRow key={index}>
+                      <TableCell component="th" scope="row">
+                        {userScore.rank}
+                      </TableCell>
+                      <TableCell>{userScore.login}</TableCell>
+                      <TableCell>{userScore.score}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
           </TableContainer>
         </Grid>
       </Grid>

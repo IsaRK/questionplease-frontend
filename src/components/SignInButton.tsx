@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   setPlayWithoutLoginActionCreator,
@@ -15,26 +15,30 @@ import {
   Typography,
   Zoom,
 } from "@material-ui/core";
-//import { useStyles } from "../App";
 import { Link } from "react-router-dom";
 import { updateLeaderboardWithoutLogin } from "../redux/leaderboardActions";
+import { RootState } from "../redux/reducer";
+import Spinner from "./Spinner";
 import { useStyles } from "./styles";
 
 export const SignInButton: React.FunctionComponent = () => {
   const dispatch = useDispatch();
   const classes = useStyles();
+  const isLogged = useSelector((state: RootState) => state.loginState.IsLogged);
 
-  const [loading, setLoading] = useState(false);
+  const [fetchingUser, setFetchingUser] = useState(false);
 
   const onClickSignInHandler = () => {
     dispatch(signIn());
-    setLoading(true);
+    setFetchingUser(true);
   };
 
   const onClickPlayWithoutLoginHandler = () => {
     dispatch(setPlayWithoutLoginActionCreator());
     dispatch(updateLeaderboardWithoutLogin());
   };
+
+  const loading = fetchingUser && !isLogged;
 
   const buttonText = "  Sign in";
   const longText = `${buttonText} with ${authService.serviceName}`;
@@ -73,7 +77,9 @@ export const SignInButton: React.FunctionComponent = () => {
         </ButtonGroup>
       </Grid>
       <Grid item>
-        {loading ? <Typography}
+        <Box padding={3}>
+          <Spinner isLoading={loading} label="Fetching your login" />
+        </Box>
       </Grid>
     </Grid>
   );

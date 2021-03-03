@@ -1,5 +1,5 @@
-import React from "react";
-import { Button, Typography } from "@material-ui/core";
+import React, { useState } from "react";
+import { Button, Grid, Typography } from "@material-ui/core";
 import { connect, useDispatch } from "react-redux";
 
 import { RootState } from "../redux/reducer";
@@ -11,6 +11,7 @@ import { ThunkDispatch } from "redux-thunk";
 import { AnyAction } from "redux";
 import { Question } from "../models/questions";
 import { useStyles } from "./styles";
+import Spinner from "./Spinner";
 
 interface IProps {
   selectedQuestion: Question | null;
@@ -40,18 +41,28 @@ export const UnconnectedQuestionComputer: React.FunctionComponent<IProps> = ({
   const dispatch = useDispatch();
   const classes = useStyles();
 
+  const [fetchingQuestion, setFetchingQuestion] = useState(false);
+
   if (selectedQuestion == null) {
     return (
-      <Button
-        variant="contained"
-        className={classes.clickeable}
-        onClick={() => {
-          dispatch(getNextQuestion);
-        }}
-        disabled={false}
-      >
-        <Typography variant="h5">Question Please</Typography>
-      </Button>
+      <Grid container direction="column" alignItems="center">
+        <Grid item>
+          <Button
+            variant="contained"
+            className={classes.clickeable}
+            onClick={() => {
+              setFetchingQuestion(true);
+              dispatch(getNextQuestion);
+            }}
+            disabled={false}
+          >
+            <Typography variant="h5">Question Please</Typography>
+          </Button>
+        </Grid>
+        <Grid item>
+          <Spinner isLoading={fetchingQuestion} label="Fetching Question" />
+        </Grid>
+      </Grid>
     );
   }
 
