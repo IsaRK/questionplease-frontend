@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import {
-  Box,
   Button,
   FormControl,
   FormControlLabel,
+  FormHelperText,
   FormLabel,
   Grid,
   Radio,
   RadioGroup,
+  Typography,
 } from "@material-ui/core";
 import { RootState } from "../redux/reducer";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,11 +16,13 @@ import { Question } from "../models/questions";
 import { validateAnswerActionCreator } from "../redux/answerActions";
 import { AnswerResult } from "./AnswerResult";
 import Identity from "../models/identity";
+import { useStyles } from "./styles";
 
 export const AnswerForm: React.FunctionComponent = () => {
   const [choice, setChoice] = useState("");
 
   const dispatch = useDispatch();
+  const classes = useStyles();
 
   const selectedQuestion: Question | null = useSelector(
     (state: RootState) => state.questionsState.SelectedQuestion
@@ -37,20 +40,28 @@ export const AnswerForm: React.FunctionComponent = () => {
     (state: RootState) => state.leaderboardState.MinScore
   );
 
+  const [error, setError] = useState(false);
+  const [helperText, setHelperText] = useState("");
+
   const dispatchValidation = (event: any) => {
     event.preventDefault(); //to prevent POST redirection after submit
 
-    dispatch(
-      validateAnswerActionCreator(
-        identity,
-        selectedQuestion?.id,
-        choice,
-        currentScore,
-        minScore
-      )
-    );
+    if (!choice) {
+      setError(true);
+      setHelperText("Please select an option.");
+    } else {
+      dispatch(
+        validateAnswerActionCreator(
+          identity,
+          selectedQuestion?.id,
+          choice,
+          currentScore,
+          minScore
+        )
+      );
 
-    setChoice("");
+      setChoice("");
+    }
   };
 
   if (selectedQuestion === null) {
@@ -62,16 +73,23 @@ export const AnswerForm: React.FunctionComponent = () => {
   }
 
   const listAnswers = selectedQuestion.answers.map((oneAnswer, index) => (
-    <FormControlLabel value={oneAnswer} control={<Radio />} label={oneAnswer} />
+    <FormControlLabel
+      value={oneAnswer}
+      control={<Radio />}
+      label={oneAnswer}
+      key={index}
+    />
   ));
 
   return (
     <form onSubmit={(e) => dispatchValidation(e)}>
-      <FormControl component="fieldset">
-        <Grid container direction="column" spacing={3}>
-          <Grid item>
+      <FormControl component="fieldset" error={error}>
+        <Grid container direction="column" spacing={3} alignItems="center">
+          <Grid item style={{ maxWidth: "500px" }}>
             <FormLabel component="legend">
-              {selectedQuestion.interrogation}
+              <Typography variant="h6" color="secondary">
+                {selectedQuestion.interrogation}
+              </Typography>
             </FormLabel>
           </Grid>
           <Grid item>
@@ -84,8 +102,13 @@ export const AnswerForm: React.FunctionComponent = () => {
             </RadioGroup>
           </Grid>
           <Grid item>
-            <Button type="submit" variant="outlined">
-              Submit Answer
+            <FormHelperText>{helperText}</FormHelperText>
+            <Button
+              type="submit"
+              variant="contained"
+              className={classes.clickeable}
+            >
+              <Typography variant="h5">Submit Answer</Typography>
             </Button>
           </Grid>
         </Grid>

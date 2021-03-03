@@ -6,13 +6,15 @@ export type LeaderboardState = {
 };
 
 export class UserScore {
-    constructor(apiScore: IUserScore) {
+    constructor(apiScore: IUserScore, rank: number) {
         this.login = apiScore.login;
         this.score = apiScore.score;
+        this.rank = rank;
     }
 
     login: string;
     score: number;
+    rank: number;
 
     toString(): string {
         return "[" + this.login + " : " + this.score + "]";

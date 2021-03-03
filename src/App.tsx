@@ -1,5 +1,4 @@
 import "./App.css";
-import { makeStyles } from "@material-ui/core/styles";
 import React from "react";
 import { Home } from "./components/Home";
 import { Redirect, Route, Switch } from "react-router-dom";
@@ -8,19 +7,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "./redux/reducer";
 import SetLogin from "./components/SetLogin";
 import About from "./components/About";
-
-/*
-export const useStyles = makeStyles((theme) => ({
-  root: {
-    padding: theme.spacing(3, 2),
-    verticalAlign: "middle",
-    display: "flex",
-    justifyContent: "center",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-}));
-*/
+import { ThemeProvider } from "@material-ui/core/styles";
+import { theme } from "./components/styles";
 
 export const App: React.FC = () => {
   const identity = useSelector((state: RootState) => state.loginState.Identity);
@@ -29,35 +17,29 @@ export const App: React.FC = () => {
   const loginNotMissing = identity != null && identity.login !== undefined;
 
   return (
-    <main>
-      <Switch>
-        <Route path="/" exact>
-          {missingLogin ? (
-            <Redirect to="/login" />
-          ) : loginNotMissing ? (
-            <Redirect to="/play" />
-          ) : (
-            <Home />
-          )}
-        </Route>
-        <Route path="/play">
-          <Play />
-        </Route>
-        <Route path="/login">
-          <SetLogin />
-        </Route>
-        <Route path="/about">
-          <About />
-        </Route>
-      </Switch>
-    </main>
+    <ThemeProvider theme={theme}>
+      <main>
+        <Switch>
+          <Route path="/" exact>
+            {missingLogin ? (
+              <Redirect to="/login" />
+            ) : loginNotMissing ? (
+              <Redirect to="/play" />
+            ) : (
+              <Home />
+            )}
+          </Route>
+          <Route path="/play">
+            <Play />
+          </Route>
+          <Route path="/login">
+            <SetLogin />
+          </Route>
+          <Route path="/about">
+            <About />
+          </Route>
+        </Switch>
+      </main>
+    </ThemeProvider>
   );
 };
-
-/*
-export const StyledBox: React.FunctionComponent = (props) => {
-  const styleClass = useStyles();
-
-  return <Box className={styleClass.root}>{props.children}</Box>;
-};
-*/

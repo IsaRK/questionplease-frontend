@@ -24,7 +24,7 @@ export type loginAction =
 //Login Action Creator Declaration (il s'agit ici de delegate et non pas de function comme pour les answerActions/questionsActions)
 const signedInActionCreator = (identity: Identity) => ({ type: loginActionTypes.SIGNED_IN, identity });
 const networkError = (error: Error) => ({ type: loginActionTypes.NETWORK_ERROR, error });
-const signOutActionCreator = () => ({ type: loginActionTypes.SIGN_OUT });
+export const signOutActionCreator = () => ({ type: loginActionTypes.SIGN_OUT });
 export const loginSetActionCreator = (identity: Identity) => ({ type: loginActionTypes.LOGINSET, identity });
 export const scoreUpdateActionCreator = (newScore: number) => ({ type: loginActionTypes.SCOREUPDATE, newScore });
 export const setPlayWithoutLoginActionCreator = () => ({ type: loginActionTypes.PLAYWITHOUTLOGIN });

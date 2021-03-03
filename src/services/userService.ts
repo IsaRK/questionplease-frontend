@@ -94,7 +94,22 @@ class UserService {
                 throw new Error("Fetched UserScore array is undefined");
             }
 
-            return response.parsedBody.map(x => new UserScore(x));
+            const sortedArray = response.parsedBody.sort((a, b) => { return b.score - a.score });
+
+            let lastScore = sortedArray[0].score;
+            let rank = 1;
+            let result: UserScore[] = [];
+
+            sortedArray.forEach(s => {
+                if (s.score < lastScore) {
+                    rank = rank + 1;
+                }
+
+                result.push(new UserScore(s, rank));
+                lastScore = s.score;
+            })
+
+            return result;
         }
         catch (ex) {
             throw new Error("Error when fetching UserScore array");

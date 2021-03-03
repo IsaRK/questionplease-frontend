@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/reducer";
 import React from "react";
-import { Box, Button, ButtonGroup, Grid, Typography } from "@material-ui/core";
+import { Button, ButtonGroup, Grid, Typography } from "@material-ui/core";
 import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 import {
@@ -10,6 +10,7 @@ import {
   getNextQuestionActionCreator,
   retryQuestionAction,
 } from "../redux/questionsActions";
+import { useStyles } from "./styles";
 
 export const AnswerResult: React.FunctionComponent = () => {
   const isValidAnswer: Boolean | null = useSelector(
@@ -26,6 +27,7 @@ export const AnswerResult: React.FunctionComponent = () => {
   );
 
   const dispatch = useDispatch();
+  const classes = useStyles();
 
   if (currentQuestionId === undefined) {
     throw new Error("Unable to load result with currentQuestionId undefined");
@@ -57,12 +59,16 @@ export const AnswerResult: React.FunctionComponent = () => {
         </Grid>
         <Grid item>
           <Typography variant="h6">
-            {"You earned " + points + "point"}
+            {"You earned " + points + " point"}
           </Typography>
         </Grid>
         <Grid item>
-          <Button variant="contained" onClick={() => dispatchNextQuestion()}>
-            Next Question Please
+          <Button
+            variant="contained"
+            className={classes.clickeable}
+            onClick={() => dispatchNextQuestion()}
+          >
+            <Typography variant="h5">Next Question Please</Typography>
           </Button>
         </Grid>
       </Grid>
@@ -75,20 +81,22 @@ export const AnswerResult: React.FunctionComponent = () => {
         <HighlightOffIcon fontSize="large" />
       </Grid>
       <Grid item>
-        <ButtonGroup variant="text" aria-label="text primary button group">
+        <ButtonGroup variant="text">
           <Button
             variant="contained"
             onClick={() => dispatchRetry()}
             disabled={false}
+            className={classes.clickeable}
           >
-            Retry
+            <Typography variant="h5">Retry</Typography>
           </Button>
           <Button
             variant="contained"
             onClick={() => dispatchAbandon()}
             disabled={false}
+            className={classes.clickeable}
           >
-            Next Question Please
+            <Typography variant="h5">Next Question Please</Typography>
           </Button>
         </ButtonGroup>
       </Grid>

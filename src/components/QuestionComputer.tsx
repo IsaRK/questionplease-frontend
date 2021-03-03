@@ -1,6 +1,5 @@
 import React from "react";
-import { Button } from "@material-ui/core";
-import Box from "@material-ui/core/Box";
+import { Button, Typography } from "@material-ui/core";
 import { connect, useDispatch } from "react-redux";
 
 import { RootState } from "../redux/reducer";
@@ -11,6 +10,7 @@ import {
 import { ThunkDispatch } from "redux-thunk";
 import { AnyAction } from "redux";
 import { Question } from "../models/questions";
+import { useStyles } from "./styles";
 
 interface IProps {
   selectedQuestion: Question | null;
@@ -33,24 +33,24 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
 
 export const UnconnectedQuestionComputer: React.FunctionComponent<IProps> = ({
   selectedQuestion,
-  playWithoutLogin,
-  isLogged,
   getNextQuestion,
 }) => {
   //useDispatch returns a function that we name dispatch
   //We then invoke actions using dispatch by passing our action creators into it
   const dispatch = useDispatch();
+  const classes = useStyles();
 
   if (selectedQuestion == null) {
     return (
       <Button
         variant="contained"
+        className={classes.clickeable}
         onClick={() => {
           dispatch(getNextQuestion);
         }}
         disabled={false}
       >
-        Question Please
+        <Typography variant="h5">Question Please</Typography>
       </Button>
     );
   }
