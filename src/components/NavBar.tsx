@@ -1,8 +1,10 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AppBar, Button, Grid, Toolbar, Typography } from "@material-ui/core";
 import React from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { RootState } from "../redux/reducer";
+import { authService } from "../services/authService";
 import SignOutButton from "./SignOutButton";
 import { useStyles } from "./styles";
 
@@ -11,6 +13,15 @@ export const NavBar: React.FunctionComponent = () => {
   const identity = useSelector((state: RootState) => state.loginState.Identity);
 
   const classes = useStyles();
+
+  const signInButton = (
+    <Button component={Link} to="/" className={classes.navbarLink}>
+      <Typography variant="h6">
+        <FontAwesomeIcon icon={authService.icon} />
+        {" SignIn"}
+      </Typography>
+    </Button>
+  );
 
   return (
     <AppBar position="static" className={classes.navbar}>
@@ -26,9 +37,7 @@ export const NavBar: React.FunctionComponent = () => {
               <Typography variant="h6">About</Typography>
             </Button>
           </Grid>
-          <Grid item>
-            <SignOutButton />
-          </Grid>
+          <Grid item>{isLogged ? <SignOutButton /> : signInButton}</Grid>
         </Grid>
       </Toolbar>
     </AppBar>

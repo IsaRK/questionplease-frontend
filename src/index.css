@@ -12,3 +12,54 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+#htmltagcloud {
+  font-size: 75%;
+  width: auto; /* auto or fixed width, e.g. 500px   */
+
+  background-color: #fff;
+  margin: 1em 1em 0 1em;
+  border: 2px dotted #ddd;
+  padding: 2em;
+}
+
+#htmltagcloud {
+  line-height: 3.5em;
+  word-spacing: normal;
+  letter-spacing: normal;
+  text-transform: none;
+  text-align: justify;
+  text-indent: 0;
+  text-decoration: none;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.wrd {
+  padding: 0;
+  position: relative;
+}
+
+.tagcloud0 {
+  font-size: 1.3em;
+  color: #02020256;
+  z-index: 10;
+}
+
+.tagcloud1 {
+  font-size: 2.2em;
+  color: #00000073;
+  z-index: 9;
+}
+
+.tagcloud2 {
+  font-size: 3.1em;
+  color: #000000af;
+  z-index: 8;
+}
+
+.tagcloud3 {
+  font-size: 4em;
+  color: #000000;
+  z-index: 7;
+}

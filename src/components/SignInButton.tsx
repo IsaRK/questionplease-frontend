@@ -49,7 +49,12 @@ export const SignInButton: React.FunctionComponent = () => {
         <ButtonGroup variant="text">
           <Tooltip
             arrow
-            title="SignIn and choose a login to keep track of your score and appear in the leaderboard"
+            title={
+              <Typography variant="subtitle1">
+                SignIn and choose a login to keep track of your score and appear
+                in the leaderboard
+              </Typography>
+            }
             TransitionComponent={Zoom}
             className={classes.tooltip}
           >
@@ -62,7 +67,11 @@ export const SignInButton: React.FunctionComponent = () => {
           </Tooltip>
           <Tooltip
             arrow
-            title="You will not appear on the leaderboard"
+            title={
+              <Typography variant="subtitle1">
+                You will not appear on the leaderboard
+              </Typography>
+            }
             TransitionComponent={Zoom}
             className={classes.tooltip}
           >

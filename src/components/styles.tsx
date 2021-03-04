@@ -29,7 +29,7 @@ export const useStyles = makeStyles({
     backgroundColor: "white",
     color: "rgba(0, 0, 0, 0.87)",
     boxShadow: "black",
-    fontSize: 11,
+    fontSize: 15,
   },
 });
 
