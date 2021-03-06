@@ -9,8 +9,7 @@ import { Provider } from "react-redux";
 import { createStore, applyMiddleware } from "redux";
 import { rootReducer } from "./redux/reducer";
 import { composeWithDevTools } from "redux-devtools-extension";
-import React, { Component } from "react";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 
 const logger = createLogger({ collapsed: true });
 

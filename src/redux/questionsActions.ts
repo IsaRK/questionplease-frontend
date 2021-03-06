@@ -74,9 +74,8 @@ export function abandonQuestion(userId: string | undefined, currentQuestionId: n
     try {
       if (userId !== undefined) { //Not PlayWithoutLogin
         await questionService.abandonQuestion(userId, currentQuestionId);
+        dispatch(abandonQuestionAction());
       }
-
-      dispatch(abandonQuestionAction());
     } catch (error) {
       throw error;
     }

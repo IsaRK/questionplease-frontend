@@ -11,10 +11,9 @@ import {
 } from "@material-ui/core";
 import React from "react";
 import { useSelector } from "react-redux";
-import { PulseLoader } from "react-spinners";
 import { RootState } from "../redux/reducer";
 import Spinner from "./Spinner";
-import { spinnerStyle, useStyles } from "./styles";
+import { useStyles } from "./styles";
 
 export const Leaderboard: React.FunctionComponent = () => {
   const currentUserScore = useSelector(
