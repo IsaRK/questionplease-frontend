@@ -6,9 +6,10 @@ import {
     SilentRequest,
     EndSessionRequest,
     InteractionRequiredAuthError,
+    PopupRequest,
 } from "@azure/msal-browser";
 
-import { loginRequest, MSAL_CONFIG } from "./authConfig";
+import { MSAL_CONFIG } from "./authConfig";
 
 //From
 //https://docs.microsoft.com/fr-fr/azure/active-directory/develop/tutorial-v2-javascript-auth-code
@@ -50,8 +51,12 @@ class AuthService {
         }
     }
 
+    loginRequest: PopupRequest = {
+        scopes: ["openid", "profile", "https://isabelleriveraingmail.onmicrosoft.com/questionplease-api/user_impersonation"]
+    };
+
     signIn() {
-        return this.myMSALObj.loginPopup(loginRequest)
+        return this.myMSALObj.loginPopup(this.loginRequest)
             .then((resp) => this.handleResponse(resp)) //this.handleResponse.bind(this)
             .catch(error => {
                 console.error(error);
@@ -76,7 +81,7 @@ class AuthService {
 
         const silentRequest: SilentRequest = {
             account: this.currentAccount === null ? undefined : this.currentAccount,
-            scopes: loginRequest.scopes
+            scopes: this.loginRequest.scopes
         }
 
         return this.myMSALObj.acquireTokenSilent(silentRequest)

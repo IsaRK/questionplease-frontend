@@ -47,7 +47,3 @@ export const MSAL_CONFIG: Configuration = {
   },
 };
 
-export const loginRequest: PopupRequest = {
-  scopes: ["openid", "profile", "https://questionplease-api.azurewebsites.net/user_impersonation"]
-};
-
