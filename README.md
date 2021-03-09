@@ -1,46 +1,82 @@
-# Getting Started with Create React App
+![](QuestionPleaseTitle.jpg)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+![GitHub](https://img.shields.io/github/license/isaRK/questionplease-frontend)
+![Azure DevOps builds](https://img.shields.io/azure-devops/build/isabelleriverain/questionplease-frontend/5)
+[![Build Status](https://dev.azure.com/isabelleriverain/questionplease-frontend/_apis/build/status/questionplease-frontend%20-%202%20-%20CI?branchName=master)](https://dev.azure.com/isabelleriverain/questionplease-frontend/_build/latest?definitionId=5&branchName=master)
+![FirstWebsite](https://img.shields.io/badge/First%20Website-yeah%20!-green)
 
-## Available Scripts
+## QuestionPlease project
 
-In the project directory, you can run:
+A very simple question game, based on [Open Trivia DB questions](https://opentdb.com/)
 
-### `yarn start`
+## Why ?
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+It is my first website ! I used this simple project to learn and exercise on several tech and frameworks :
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- React/Redux
+- TypeScript
+- Azure Functions in .NET
+- Azure CosmosDB
+- Azure authentification process (Authorization Code Flow)
+- Azure pipelines
+- [CSS-in-JS with Material-UI's styling solution](https://material-ui.com/styles/basics/)
 
-### `yarn test`
+## Installation
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Clone the repository
+Then go to your local repo
 
-### `yarn build`
+    npm install
+    npm start
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Runs the app in the development mode.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Open http://localhost:3000 to view it in the browser.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Features
 
-### `yarn eject`
+2 modes : with and without authentification
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+![](QuestionPleaseDemo.gif)
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### With authentification
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+SignIn with your Windows account (any Microsoft account - personnal or organizationnal) :
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+- you'll be asked to choose a login
+- the app will keep track of your score between sessions
+- your score will be displayed in the leaderboard with your login (only if you are in the top 3 players)
+- you'll never have the same question twice unless you choose to Retry the question
 
-## Learn More
+### Without authentification
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- No login to choose
+- Your score will not appear in the leaderboard
+- You may have to answers the same question twice (or more)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## API Reference
+
+This website uses Azure functions, written in C# :
+[GitRepo of the backend API](https://github.com/IsaRK/questionplease-api)
+
+## How to use?
+
+[Go to game](https://questionplease-frontend.azurewebsites.net/)
+
+## Contribute
+
+New issues are welcome.
+Please let me know before contributing !
+
+## Credits
+
+I followed many tutorials to ramp up on React/Redux/Azure frameworks.
+
+I have link some of them in this GitHub Wiki.
+I have also detailled some stuff - and pain points - I want to remember.
+
+## License
+
+QuestionPlease is released under the [MIT License](https://opensource.org/licenses/MIT)
+
+MIT © [IsaRK](https://github.com/IsaRK)
