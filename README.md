@@ -1,8 +1,8 @@
 ![](QuestionPleaseTitle.jpg)
 
-![GitHub](https://img.shields.io/github/license/isaRK/questionplease-frontend)
 ![Azure DevOps builds](https://img.shields.io/azure-devops/build/isabelleriverain/questionplease-frontend/5)
 [![Build Status](https://dev.azure.com/isabelleriverain/questionplease-frontend/_apis/build/status/questionplease-frontend%20-%202%20-%20CI?branchName=master)](https://dev.azure.com/isabelleriverain/questionplease-frontend/_build/latest?definitionId=5&branchName=master)
+![GitHub](https://img.shields.io/github/license/IsaRK/questionplease-frontend)
 ![FirstWebsite](https://img.shields.io/badge/First%20Website-yeah%20!-green)
 
 ## QuestionPlease project
